@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetCode Reference</title>
+<style>
+  :root {
+    --bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:#2a2a2a;
+    --accent:#00e5ff;--text:#e8e8e8;--muted:#666;
+    --easy:#22c55e;--medium:#f59e0b;--hard:#ef4444;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;min-height:100vh}
+  header{padding:20px 20px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:100}
+  h1{font-size:17px;font-weight:700;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;margin-bottom:12px}
+  h1 span{color:var(--muted);font-weight:400}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  #search{background:var(--card);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:inherit;font-size:13px;padding:6px 12px;width:220px;outline:none;transition:border-color .2s}
+  #search:focus{border-color:var(--accent)}
+  #search::placeholder{color:var(--muted)}
+  .filters{display:flex;gap:5px;flex-wrap:wrap}
+  .fbtn{background:var(--card);border:1px solid var(--border);border-radius:3px;color:var(--muted);cursor:pointer;font-family:inherit;font-size:11px;padding:4px 9px;text-transform:uppercase;letter-spacing:.06em;transition:all .15s}
+  .fbtn:hover{border-color:var(--accent);color:var(--accent)}
+  .fbtn.active{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700}
+  #count{margin-left:auto;color:var(--muted);font-size:11px}
+  .fsbtn{background:var(--card);border:1px solid var(--border);border-radius:3px;color:var(--muted);cursor:pointer;font-family:inherit;font-size:11px;padding:4px 9px;transition:all .15s}
+  .fsbtn:hover{border-color:var(--accent);color:var(--accent)}
+  main{padding:14px 20px 40px;max-width:1200px}
+  .cat-block{margin-bottom:24px}
+  .cat-title{font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:6px 0 9px;border-bottom:1px solid var(--border);margin-bottom:9px;display:flex;align-items:center;gap:8px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:7px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:11px 13px;cursor:pointer;transition:border-color .15s}
+  .card:hover{border-color:var(--accent)}
+  .card-header{display:flex;align-items:flex-start;gap:8px;justify-content:space-between}
+  .card-title{font-size:13px;font-weight:600;flex:1;line-height:1.4}
+  .diff{font-size:10px;font-weight:700;padding:2px 5px;border-radius:2px;flex-shrink:0;margin-top:1px}
+  .E{background:rgba(34,197,94,.15);color:var(--easy)}
+  .M{background:rgba(245,158,11,.15);color:var(--medium)}
+  .H{background:rgba(239,68,68,.15);color:var(--hard)}
+  .P{background:rgba(124,58,237,.15);color:#a78bfa}
+  .card-idea{margin-top:7px;color:#aaa;font-size:12px;line-height:1.55}
+  .card-meta{margin-top:7px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .card-pattern{font-size:10px;letter-spacing:.05em}
+  .card-tc{color:var(--muted);font-size:10px}
+  .tag{display:inline-block;background:#1e1e2e;border:1px solid var(--border);border-radius:2px;color:var(--muted);font-size:10px;margin:2px 2px 0 0;padding:2px 5px}
+  .card-hint{color:#444;font-size:10px;margin-top:7px;letter-spacing:.03em}
+  .empty{color:var(--muted);padding:40px 0;text-align:center;font-size:14px}
+
+  /* Modal */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;align-items:center;justify-content:center;padding:16px}
+  .overlay.open{display:flex}
+  .modal{background:#141414;border:1px solid #333;border-radius:6px;max-width:740px;width:100%;max-height:92vh;overflow-y:auto;padding:24px 28px;position:relative;scrollbar-width:thin;scrollbar-color:#333 transparent}
+  .mclose{position:sticky;top:0;float:right;background:#1a1a1a;border:1px solid #333;border-radius:3px;color:var(--muted);cursor:pointer;font-family:inherit;font-size:11px;padding:4px 10px;letter-spacing:.08em;margin-bottom:12px;transition:all .15s;z-index:10}
+  .mclose:hover{border-color:var(--accent);color:var(--accent)}
+  .m-title{font-size:19px;font-weight:700;margin-bottom:4px}
+  .m-cat{font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+  .m-idea{background:#0d0d0d;border-left:3px solid var(--accent);border-radius:0 4px 4px 0;color:#ccc;font-size:13px;line-height:1.65;margin-bottom:18px;padding:11px 15px}
+  .m-sec{margin-bottom:16px}
+  .m-lbl{color:var(--accent);font-size:10px;font-weight:700;letter-spacing:.14em;margin-bottom:7px;text-transform:uppercase}
+  .m-txt{color:#ccc;font-size:13px;line-height:1.65}
+  .steps{list-style:none;padding:0;counter-reset:s}
+  .steps li{counter-increment:s;display:flex;gap:10px;align-items:flex-start;margin-bottom:7px;color:#ccc;font-size:13px;line-height:1.6}
+  .steps li::before{content:counter(s);background:#1e1e2e;border:1px solid var(--border);border-radius:3px;color:var(--accent);flex-shrink:0;font-size:10px;font-weight:700;min-width:20px;padding:2px 5px;text-align:center;margin-top:2px}
+  .code{background:#080808;border:1px solid #1e1e1e;border-radius:4px;color:#a8d8a8;font-family:inherit;font-size:12px;line-height:1.7;margin-top:8px;padding:12px 14px;white-space:pre;overflow-x:auto}
+  .gotcha{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:4px;color:#fca5a5;font-size:13px;line-height:1.6;padding:11px 14px}
+  .cplx{display:flex;gap:12px}
+  .citem{background:#0d0d0d;border:1px solid var(--border);border-radius:4px;padding:7px 13px;flex:1}
+  .citem .cl{color:var(--muted);font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+  .citem .cv{color:#e2e8f0;font-size:13px;font-weight:600}
+  .m-tags{margin-top:16px;padding-top:14px;border-bottom:0;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header>
+  <h1>LeetCode <span>// quick ref</span></h1>
+  <div class="controls">
+    <input id="search" type="text" placeholder="Поиск...">
+    <div class="filters" id="filters"></div>
+    <span id="count"></span>
+    <button class="fsbtn" id="fsBtn">⛶ Fullscreen</button>
+  </div>
+</header>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <button class="mclose" id="mclose">✕ закрыть</button>
+    <div id="mcontent"></div>
+  </div>
+</div>
+
+<main id="main"></main>
+
+<script>
+var P = [];
+function add(cat,title,diff,idea,pattern,tc,sc,steps,code,gotcha,tags){
+  P.push({cat:cat,title:title,diff:diff,idea:idea,pattern:pattern,tc:tc,sc:sc,steps:steps,code:code,gotcha:gotcha,tags:tags});
+}
+
+// ARRAY
+add("Array","Two Sum","E",
+"HashMap: для каждого x ищи complement = target - x. Один проход O(n).",
+"Hash Map / Complement lookup","O(n)","O(n)",
+["Итерируй массив с индексом i",
+ "complement = target - nums[i]",
+ "Если complement в map → return [map[complement], i]",
+ "Иначе map[nums[i]] = i"],
+"map = {}\nfor i, num in enumerate(nums):\n    comp = target - num\n    if comp in map:\n        return [map[comp], i]\n    map[num] = i",
+"Сначала проверяй map, потом добавляй — иначе используешь один индекс дважды.",
+["hash map","one-pass"]);
+
+add("Array","Best Time to Buy and Sell Stock","E",
+"Greedy: трекай min_price слева, на каждом шаге считай potential profit.",
+"Greedy / min pointer","O(n)","O(1)",
+["min_p = inf, max_p = 0",
+ "Для каждой цены: обнови min_p",
+ "profit = price - min_p",
+ "max_p = max(max_p, profit)"],
+"min_p, max_p = float('inf'), 0\nfor p in prices:\n    min_p = min(min_p, p)\n    max_p = max(max_p, p - min_p)\nreturn max_p",
+"Сначала обновляем min, потом profit — покупка должна быть ДО продажи.",
+["greedy"]);
+
+add("Array","Contains Duplicate","E",
+"HashSet: добавляй по одному — если элемент уже есть, return True.",
+"HashSet","O(n)","O(n)",
+["Создай set",
+ "Для каждого num: если в set → return True",
+ "Иначе добавь в set",
+ "Return False"],
+"seen = set()\nfor n in nums:\n    if n in seen: return True\n    seen.add(n)\nreturn False",
+"Альтернатива: sorted + соседи (O(n log n), O(1)) — но читается хуже.",
+["hash set"]);
+
+add("Array","Product of Array Except Self","M",
+"Два прохода: prefix слева × suffix справа. Без деления — нет проблем с нулями.",
+"Prefix / Suffix products","O(n)","O(1) extra",
+["res[i] = 1 для всех i",
+ "Left pass: res[i] = res[i-1] * nums[i-1]",
+ "Right pass: running suffix; res[i] *= suf; suf *= nums[i]",
+ "Return res"],
+"res = [1] * len(nums)\nfor i in range(1, len(nums)):\n    res[i] = res[i-1] * nums[i-1]\nsuf = 1\nfor i in range(len(nums)-1, -1, -1):\n    res[i] *= suf\n    suf *= nums[i]\nreturn res",
+"Не используй деление — если есть 0, всё ломается.",
+["prefix","suffix"]);
+
+add("Array","Maximum Subarray","M",
+"Kadane's: на каждом шаге — продолжать текущий subarray или начать новый с num.",
+"Kadane's Algorithm","O(n)","O(1)",
+["curr = max_sum = nums[0]",
+ "Для каждого num с index 1:",
+ "  curr = max(num, curr + num)",
+ "  max_sum = max(max_sum, curr)"],
+"curr = res = nums[0]\nfor n in nums[1:]:\n    curr = max(n, curr + n)\n    res = max(res, curr)\nreturn res",
+"Начинай с nums[0], не 0 — all-negative массив даст неверный ответ.",
+["kadane","dp"]);
+
+add("Array","Maximum Product Subarray","M",
+"Трекай и max и min — отрицательное × отрицательное = положительное.",
+"DP with min/max tracking","O(n)","O(1)",
+["cur_max = cur_min = res = nums[0]",
+ "Для каждого num: cands = (num, cur_max*num, cur_min*num)",
+ "cur_max = max(cands), cur_min = min(cands)",
+ "res = max(res, cur_max)"],
+"cur_max = cur_min = res = nums[0]\nfor n in nums[1:]:\n    cands = (n, cur_max*n, cur_min*n)\n    cur_max, cur_min = max(cands), min(cands)\n    res = max(res, cur_max)\nreturn res",
+"Используй старые cur_max/cur_min — вычисляй cur_min до обновления cur_max.",
+["dp","negative numbers"]);
+
+add("Array","Find Minimum in Rotated Sorted Array","M",
+"Binary search: nums[mid] > nums[hi] → минимум справа, иначе слева (включая mid).",
+"Binary Search on rotated array","O(log n)","O(1)",
+["lo=0, hi=n-1",
+ "mid = (lo+hi)//2",
+ "Если nums[mid] > nums[hi] → lo = mid+1",
+ "Иначе hi = mid",
+ "Return nums[lo]"],
+"lo, hi = 0, len(nums)-1\nwhile lo < hi:\n    mid = (lo+hi)//2\n    if nums[mid] > nums[hi]:\n        lo = mid + 1\n    else:\n        hi = mid\nreturn nums[lo]",
+"Сравнивай с nums[hi], не nums[lo] — иначе не-ротированный массив сломает логику.",
+["binary search","rotated"]);
+
+add("Array","Search in Rotated Sorted Array","M",
+"Binary search: определяй какая половина отсортирована, проверяй попадает ли target туда.",
+"Binary Search with rotation awareness","O(log n)","O(1)",
+["lo, hi, mid как обычно",
+ "Если левая [lo..mid] отсортирована (nums[lo] <= nums[mid]):",
+ "  target в [nums[lo], nums[mid]) → hi=mid-1, иначе lo=mid+1",
+ "Иначе правая отсортирована:",
+ "  target в (nums[mid], nums[hi]] → lo=mid+1, иначе hi=mid-1"],
+"lo, hi = 0, len(nums)-1\nwhile lo <= hi:\n    mid = (lo+hi)//2\n    if nums[mid] == target: return mid\n    if nums[lo] <= nums[mid]:  # left sorted\n        if nums[lo] <= target < nums[mid]: hi = mid-1\n        else: lo = mid+1\n    else:  # right sorted\n        if nums[mid] < target <= nums[hi]: lo = mid+1\n        else: hi = mid-1\nreturn -1",
+"<= при проверке отсортированности важен — lo==mid означает одиночный элемент.",
+["binary search","rotated"]);
+
+add("Array","3 Sum","M",
+"Sort + two pointers: фиксируй i, двигай l/r навстречу, скипай дубли.",
+"Sort + Two Pointers","O(n^2)","O(n) output",
+["Сортируй nums",
+ "Для каждого i: nums[i]>0 → break; дубль → skip",
+ "l=i+1, r=n-1: ищи пару с суммой -nums[i]",
+ "При нахождении: скипай дубли l и r, двигай оба"],
+"nums.sort(); res = []\nfor i, n in enumerate(nums):\n    if n > 0: break\n    if i > 0 and n == nums[i-1]: continue\n    l, r = i+1, len(nums)-1\n    while l < r:\n        s = n + nums[l] + nums[r]\n        if s < 0: l += 1\n        elif s > 0: r -= 1\n        else:\n            res.append([n,nums[l],nums[r]])\n            l += 1\n            while l < r and nums[l] == nums[l-1]: l += 1\nreturn res",
+"Двойной skip дублей: при переборе i И после нахождения триплета.",
+["two pointers","sort","dedup"]);
+
+add("Array","Container With Most Water","M",
+"Two pointers с краёв: двигай указатель с меньшей высотой — только так можно улучшить площадь.",
+"Greedy Two Pointers","O(n)","O(1)",
+["l=0, r=n-1",
+ "area = min(h[l], h[r]) * (r-l)",
+ "Обнови max",
+ "Если h[l] < h[r] → l++, иначе r--"],
+"l, r = 0, len(height)-1\nres = 0\nwhile l < r:\n    res = max(res, min(height[l],height[r]) * (r-l))\n    if height[l] < height[r]: l += 1\n    else: r -= 1\nreturn res",
+"Почему меньший? Ширина уменьшается в любом случае — единственный шанс улучшить = поднять высоту.",
+["two pointers","greedy"]);
+
+// BINARY
+add("Binary","Sum of Two Integers","M",
+"XOR = сумма без carry. AND<<1 = carry. Повторяй пока carry != 0.",
+"Bit manipulation — carry simulation","O(1)","O(1)",
+["Пока b != 0:",
+ "  carry = (a & b) << 1",
+ "  a = a ^ b",
+ "  b = carry",
+ "Return a"],
+"def getSum(a, b):\n    mask = 0xFFFFFFFF\n    while b & mask:\n        carry = (a & b) << 1\n        a = a ^ b\n        b = carry\n    return a if b == 0 else a & mask",
+"Python int неограничен — нужна маска 0xFFFFFFFF для 32-bit эмуляции.",
+["bit manipulation","XOR"]);
+
+add("Binary","Number of 1 Bits","E",
+"Трюк: n & (n-1) убирает правый единичный бит. Считай итерации до n=0.",
+"Bit trick: n & (n-1)","O(k) k=кол-во бит","O(1)",
+["count = 0",
+ "Пока n != 0: count++, n = n & (n-1)",
+ "Return count"],
+"def hammingWeight(n):\n    count = 0\n    while n:\n        n &= n - 1\n        count += 1\n    return count",
+"n&(n-1) убирает ровно один единичный бит (самый правый).",
+["bit manipulation"]);
+
+add("Binary","Counting Bits","E",
+"dp[i] = dp[i >> 1] + (i & 1). Сдвиг вправо убирает последний бит.",
+"DP with bit shift","O(n)","O(n)",
+["dp = [0] * (n+1)",
+ "Для i от 1 до n:",
+ "  dp[i] = dp[i >> 1] + (i & 1)",
+ "Return dp"],
+"dp = [0] * (n+1)\nfor i in range(1, n+1):\n    dp[i] = dp[i >> 1] + (i & 1)\nreturn dp",
+"i>>1 = i//2 (убирает последний бит). (i&1) = 0 если чётное, 1 если нечётное.",
+["dp","bit manipulation"]);
+
+add("Binary","Missing Number","E",
+"Gauss: expected = n*(n+1)/2. Missing = expected - sum(nums). Или XOR всех индексов и значений.",
+"Math (Gauss) или XOR","O(n)","O(1)",
+["Math: return n*(n+1)//2 - sum(nums)",
+ "XOR: xor = 0",
+ "for i,v in enumerate(nums): xor ^= i ^ v",
+ "return xor ^ len(nums)"],
+"# Math\nreturn n*(n+1)//2 - sum(nums)\n\n# XOR\nxor = 0\nfor i, v in enumerate(nums):\n    xor ^= i ^ v\nreturn xor ^ len(nums)",
+"Gauss проще. XOR работает без переполнения и элегантнее.",
+["math","XOR"]);
+
+add("Binary","Reverse Bits","E",
+"32 итерации: берём правый бит n, сдвигаем result влево, OR-им бит.",
+"Bit-by-bit reverse","O(32)=O(1)","O(1)",
+["res = 0",
+ "Для i от 0 до 31:",
+ "  res = (res << 1) | (n & 1)",
+ "  n >>= 1",
+ "Return res & 0xFFFFFFFF"],
+"def reverseBits(n):\n    res = 0\n    for _ in range(32):\n        res = (res << 1) | (n & 1)\n        n >>= 1\n    return res",
+"В Python нужно & 0xFFFFFFFF в конце из-за знакового расширения.",
+["bit manipulation"]);
+
+// DYNAMIC PROGRAMMING
+add("Dynamic Programming","Climbing Stairs","E",
+"Fibonacci: способов до n = способов с n-1 + способов с n-2.",
+"Fibonacci / Bottom-up DP","O(n)","O(1)",
+["Если n<=2: return n",
+ "a=1, b=2",
+ "Для i от 3 до n: a, b = b, a+b",
+ "Return b"],
+"if n <= 2: return n\na, b = 1, 2\nfor _ in range(3, n+1):\n    a, b = b, a+b\nreturn b",
+"Base cases: n=1→1, n=2→2. Не начинай оба с 0.",
+["dp","fibonacci"]);
+
+add("Dynamic Programming","Coin Change","M",
+"dp[i] = мин. монет для суммы i. dp[0]=0, пробуй каждую монету для каждой суммы.",
+"Unbounded Knapsack DP","O(amount x coins)","O(amount)",
+["dp = [inf]*(amount+1), dp[0]=0",
+ "Для i от 1 до amount:",
+ "  Для каждой монеты c <= i:",
+ "    dp[i] = min(dp[i], dp[i-c]+1)",
+ "Return dp[amount] или -1"],
+"dp = [float('inf')] * (amount+1)\ndp[0] = 0\nfor i in range(1, amount+1):\n    for c in coins:\n        if c <= i:\n            dp[i] = min(dp[i], dp[i-c]+1)\nreturn dp[amount] if dp[amount] != float('inf') else -1",
+"Инициализируй inf, не 0 — min(inf, ...) даст правильный результат.",
+["dp"]);
+
+add("Dynamic Programming","Longest Increasing Subsequence","M",
+"O(n log n): patience sort с binary search на tails[]. tails[pos] = замена.",
+"DP или Binary Search (patience sort)","O(n log n)","O(n)",
+["tails = []",
+ "Для каждого num: pos = bisect_left(tails, num)",
+ "Если pos == len(tails) → append",
+ "Иначе tails[pos] = num",
+ "Return len(tails)"],
+"from bisect import bisect_left\ntails = []\nfor n in nums:\n    pos = bisect_left(tails, n)\n    if pos == len(tails):\n        tails.append(n)\n    else:\n        tails[pos] = n\nreturn len(tails)",
+"tails[] — это НЕ сам LIS, только рабочий массив. Его длина = длина LIS.",
+["dp","binary search"]);
+
+add("Dynamic Programming","Longest Common Subsequence","M",
+"2D DP: dp[i][j] = LCS для s1[:i] и s2[:j]. Совпадение +1, иначе max соседей.",
+"2D DP","O(mxn)","O(mxn)",
+["dp[m+1][n+1] = 0",
+ "Для i,j: если s1[i-1]==s2[j-1]: dp[i][j]=dp[i-1][j-1]+1",
+ "Иначе: dp[i][j]=max(dp[i-1][j], dp[i][j-1])",
+ "Return dp[m][n]"],
+"m, n = len(t1), len(t2)\ndp = [[0]*(n+1) for _ in range(m+1)]\nfor i in range(1,m+1):\n    for j in range(1,n+1):\n        if t1[i-1]==t2[j-1]: dp[i][j]=dp[i-1][j-1]+1\n        else: dp[i][j]=max(dp[i-1][j],dp[i][j-1])\nreturn dp[m][n]",
+"Subsequence != substring: буквы не обязаны идти подряд.",
+["dp","2D","string"]);
+
+add("Dynamic Programming","Word Break Problem","M",
+"dp[i] = True если s[:i] разбивается по словарю. Проверяй все split-позиции j.",
+"1D DP","O(n^2 x m)","O(n)",
+["word_set = set(wordDict)",
+ "dp = [False]*(n+1), dp[0]=True",
+ "Для i от 1..n: для j от 0..i:",
+ "  Если dp[j] и s[j:i] в word_set: dp[i]=True",
+ "Return dp[n]"],
+"word_set = set(wordDict)\ndp = [False] * (len(s)+1)\ndp[0] = True\nfor i in range(1, len(s)+1):\n    for j in range(i):\n        if dp[j] and s[j:i] in word_set:\n            dp[i] = True\n            break\nreturn dp[-1]",
+"Слова могут перекрываться — перебирай все j, не первое совпадение.",
+["dp","hash set"]);
+
+add("Dynamic Programming","Combination Sum","M",
+"Backtracking: добавляй кандидат, уменьшай remain, при 0 — сохрани. Элементы повторяемы.",
+"Backtracking","O(n^(t/min))","O(t/min) стек",
+["Сортируй candidates",
+ "dfs(start, path, remain):",
+ "  remain==0 → append copy",
+ "  candidates[i] > remain → break",
+ "  Добавь, рекурси с i (не i+1!), pop"],
+"res = []\ndef dfs(start, path, remain):\n    if remain == 0: res.append(path[:]); return\n    for i in range(start, len(candidates)):\n        if candidates[i] > remain: break\n        path.append(candidates[i])\n        dfs(i, path, remain - candidates[i])\n        path.pop()\ncandidates.sort()\ndfs(0, [], target)\nreturn res",
+"Передавай i, не i+1 — элементы можно использовать повторно.",
+["backtracking"]);
+
+add("Dynamic Programming","House Robber","M",
+"dp[i] = max(взять i + dp[i-2], пропустить + dp[i-1]). Только две переменные.",
+"1D DP rolling variables","O(n)","O(1)",
+["a=0, b=0 (dp[i-2], dp[i-1])",
+ "Для каждого num:",
+ "  a, b = b, max(b, a+num)",
+ "Return b"],
+"a, b = 0, 0\nfor n in nums:\n    a, b = b, max(b, a+n)\nreturn b",
+"Нет запрета брать 3 подряд — просто математически невыгодно.",
+["dp"]);
+
+add("Dynamic Programming","House Robber II","M",
+"Круговой = первый и последний смежны. Запусти House Robber дважды: без первого и без последнего.",
+"House Robber x2","O(n)","O(1)",
+["Если n==1: return nums[0]",
+ "helper(arr) = обычный House Robber",
+ "Return max(helper(nums[:-1]), helper(nums[1:]))"],
+"def rob1(nums):\n    a, b = 0, 0\n    for n in nums:\n        a, b = b, max(b, a+n)\n    return b\nif len(nums)==1: return nums[0]\nreturn max(rob1(nums[:-1]), rob1(nums[1:]))",
+"Edge case n==1 — без него оба подмассива пустые.",
+["dp","circular"]);
+
+add("Dynamic Programming","Decode Ways","M",
+"dp[i] = способов декодировать s[:i]. Однозначный вариант + двузначный вариант.",
+"1D DP","O(n)","O(1)",
+["dp[0]=1, dp[1]=(1 если s[0]!='0' else 0)",
+ "Для i от 2..n:",
+ "  s[i-1]!='0' → dp[i] += dp[i-1]",
+ "  10<=int(s[i-2:i])<=26 → dp[i] += dp[i-2]",
+ "Return dp[n]"],
+"if not s or s[0]=='0': return 0\ndp = [0]*(len(s)+1)\ndp[0], dp[1] = 1, 1\nfor i in range(2, len(s)+1):\n    if s[i-1] != '0':\n        dp[i] += dp[i-1]\n    two = int(s[i-2:i])\n    if 10 <= two <= 26:\n        dp[i] += dp[i-2]\nreturn dp[-1]",
+"'0' сам по себе не декодируется. '30', '40' — тоже нельзя. Только 10 и 20.",
+["dp","string"]);
+
+add("Dynamic Programming","Unique Paths","M",
+"dp[i][j] = сверху + слева. Оптимизируй до 1D: dp[j] += dp[j-1].",
+"2D DP или комбинаторика","O(mxn)","O(n)",
+["dp = [1]*n",
+ "Для каждой строки i от 1..m:",
+ "  Для j от 1..n: dp[j] += dp[j-1]",
+ "Return dp[-1]"],
+"dp = [1] * n\nfor i in range(1, m):\n    for j in range(1, n):\n        dp[j] += dp[j-1]\nreturn dp[-1]\n\n# Math O(1)\nfrom math import comb\nreturn comb(m+n-2, m-1)",
+"Math-версия C(m+n-2, m-1) самая быстрая — но надо знать формулу.",
+["dp","math","grid"]);
+
+add("Dynamic Programming","Jump Game","M",
+"Greedy: трекай max_reach. Если i > max_reach — до этой позиции не добраться.",
+"Greedy","O(n)","O(1)",
+["reach = 0",
+ "Для i, num в enumerate(nums):",
+ "  Если i > reach → return False",
+ "  reach = max(reach, i+num)",
+ "Return True"],
+"reach = 0\nfor i, n in enumerate(nums):\n    if i > reach: return False\n    reach = max(reach, i+n)\nreturn True",
+"Не нужен BFS/DP — достаточно жадно трекать максимальную достижимую позицию.",
+["greedy"]);
+
+// GRAPH
+add("Graph","Clone Graph","M",
+"DFS + HashMap: old_node → clone. Без него — бесконечный цикл в графах с циклами.",
+"DFS + HashMap","O(V+E)","O(V+E)",
+["visited = {} (old → clone)",
+ "dfs(node): если в visited → return visited[node]",
+ "clone = Node(node.val); visited[node] = clone",
+ "Для каждого соседа: clone.neighbors.append(dfs(nb))",
+ "Return clone"],
+"def cloneGraph(node):\n    visited = {}\n    def dfs(n):\n        if n in visited: return visited[n]\n        clone = Node(n.val)\n        visited[n] = clone\n        for nb in n.neighbors:\n            clone.neighbors.append(dfs(nb))\n        return clone\n    return dfs(node) if node else None",
+"visited[node] = clone ДО рекурсии — иначе циклы вызовут бесконечную рекурсию.",
+["dfs","hash map","recursion"]);
+
+add("Graph","Course Schedule","M",
+"Cycle detection в DAG. Kahn's BFS (in-degrees) или DFS с 3 состояниями.",
+"Topological Sort / Cycle Detection","O(V+E)","O(V+E)",
+["Посчитай in-degrees всех вершин",
+ "Добавь в очередь все вершины с in-degree=0",
+ "BFS: убирай рёбра, добавляй новые 0-in-degree",
+ "Если обработано numCourses вершин → ациклический"],
+"from collections import deque, defaultdict\ngraph = defaultdict(list)\nindeg = [0]*numCourses\nfor a,b in prerequisites:\n    graph[b].append(a); indeg[a]+=1\nq = deque(i for i in range(numCourses) if indeg[i]==0)\ncount = 0\nwhile q:\n    node = q.popleft(); count += 1\n    for nb in graph[node]:\n        indeg[nb]-=1\n        if indeg[nb]==0: q.append(nb)\nreturn count == numCourses",
+"Если count < numCourses — есть цикл, курсы нельзя завершить.",
+["topological sort","cycle","BFS"]);
+
+add("Graph","Pacific Atlantic Water Flow","M",
+"Reverse BFS от каждого океана вверх (>=). Ответ = пересечение двух множеств.",
+"Multi-source BFS (reverse flow)","O(mxn)","O(mxn)",
+["pac = верхняя строка + левый столбец",
+ "atl = нижняя строка + правый столбец",
+ "BFS: двигайся если сосед >= текущий",
+ "Return pac_visited INTERSECT atl_visited"],
+"def bfs(starts):\n    q = deque(starts); vis = set(starts)\n    while q:\n        r,c = q.popleft()\n        for dr,dc in [(0,1),(0,-1),(1,0),(-1,0)]:\n            nr,nc=r+dr,c+dc\n            if 0<=nr<R and 0<=nc<C and (nr,nc) not in vis and h[nr][nc]>=h[r][c]:\n                vis.add((nr,nc)); q.append((nr,nc))\n    return vis\nreturn list(bfs(pac) & bfs(atl))",
+"Reverse thinking: не куда вода стекает, а откуда она может подняться к океану.",
+["BFS","multi-source","reverse"]);
+
+add("Graph","Number of Islands","M",
+"DFS flood fill: '1' → count++, затопи весь остров (меняй на '0').",
+"DFS Flood Fill","O(mxn)","O(mxn) стек",
+["Для каждой (i,j):",
+ "  Если grid[i][j]=='1': count++, dfs(i,j)",
+ "  dfs: меняй на '0', рекурси в 4 стороны",
+ "Return count"],
+"def dfs(r, c):\n    if r<0 or r>=R or c<0 or c>=C or grid[r][c]!='1': return\n    grid[r][c]='0'\n    dfs(r+1,c);dfs(r-1,c);dfs(r,c+1);dfs(r,c-1)\ncount=0\nfor r in range(R):\n    for c in range(C):\n        if grid[r][c]=='1':\n            count+=1; dfs(r,c)\nreturn count",
+"Изменение матрицы — side effect. Если нельзя менять: используй visited set.",
+["dfs","flood fill","matrix"]);
+
+add("Graph","Longest Consecutive Sequence","M",
+"HashSet: запускай отсчёт ТОЛЬКО если num-1 нет в set (начало цепочки).",
+"HashSet O(n)","O(n)","O(n)",
+["num_set = set(nums)",
+ "Для каждого num:",
+ "  Если num-1 в set → skip",
+ "  Иначе: streak=1, cur=num+1 пока в set",
+ "  longest = max(longest, streak)"],
+"num_set = set(nums)\nlongest = 0\nfor n in num_set:\n    if n-1 not in num_set:\n        cur, streak = n, 1\n        while cur+1 in num_set:\n            cur+=1; streak+=1\n        longest = max(longest, streak)\nreturn longest",
+"Итерируй num_set, не nums — дубли запустят подсчёт дважды.",
+["hash set"]);
+
+add("Graph","Alien Dictionary","H",
+"Топосорт на символах. Сравни соседние слова → первый различный char → ребро в графе.",
+"Topological Sort на символах","O(C) сумма длин","O(1) 26 символов",
+["adj = {c: set() для каждого символа}",
+ "Для пары соседних слов: найди первый различный char",
+ "Если word1 является prefix word2 и длиннее → invalid",
+ "Topo sort (DFS) на символах"],
+"adj = {c:set() for w in words for c in w}\nfor i in range(len(words)-1):\n    w1,w2=words[i],words[i+1]\n    m=min(len(w1),len(w2))\n    if len(w1)>len(w2) and w1[:m]==w2[:m]: return ''\n    for j in range(m):\n        if w1[j]!=w2[j]: adj[w1[j]].add(w2[j]); break\n# DFS topo sort на символах...",
+"Слово-prefix после длинного (ab после abc) = invalid. Наоборот (abc после ab) = valid.",
+["topological sort","string","graph"]);
+
+add("Graph","Graph Valid Tree","M",
+"Дерево = связный + без циклов. n-1 рёбер + все вершины достижимы.",
+"Union-Find или DFS","O(n)","O(n)",
+["Если len(edges) != n-1 → False",
+ "Union-Find: для каждого ребра",
+ "  Если уже в одном компоненте → цикл",
+ "Return True"],
+"if len(edges)!=n-1: return False\nparent=list(range(n))\ndef find(x):\n    while parent[x]!=x: parent[x]=parent[parent[x]]; x=parent[x]\n    return x\nfor a,b in edges:\n    ra,rb=find(a),find(b)\n    if ra==rb: return False\n    parent[ra]=rb\nreturn True",
+"Проверь n-1 рёбер первым — быстрый early exit.",
+["union-find","dfs"]);
+
+add("Graph","Number of Connected Components","M",
+"Union-Find: начинай с count=n, при объединении разных компонент count--.",
+"Union-Find с path compression","O(n*a(n))~O(n)","O(n)",
+["parent[i]=i, count=n",
+ "Для каждого ребра (a,b): find(a) и find(b)",
+ "Если разные корни: union, count--",
+ "Return count"],
+"parent=list(range(n))\ndef find(x):\n    while parent[x]!=x:\n        parent[x]=parent[parent[x]]; x=parent[x]\n    return x\ncount=n\nfor a,b in edges:\n    ra,rb=find(a),find(b)\n    if ra!=rb:\n        parent[ra]=rb; count-=1\nreturn count",
+"Path compression (parent[x]=parent[parent[x]]) даёт почти O(1) per operation.",
+["union-find"]);
+
+// INTERVAL
+add("Interval","Insert Interval","M",
+"3 фазы: до вставки, merge перекрывающихся, после вставки.",
+"Linear scan с merge","O(n)","O(n)",
+["Добавляй интервалы где end < newStart",
+ "Пока start текущего <= newEnd: merge (min start, max end)",
+ "Добавь merged интервал",
+ "Добавь остаток"],
+"res=[]\ni,n=0,len(intervals)\nwhile i<n and intervals[i][1]<newInterval[0]:\n    res.append(intervals[i]); i+=1\nwhile i<n and intervals[i][0]<=newInterval[1]:\n    newInterval=[min(newInterval[0],intervals[i][0]),\n                 max(newInterval[1],intervals[i][1])]; i+=1\nres.append(newInterval)\nreturn res+intervals[i:]",
+"Условие перекрытия: intervals[i][0] <= newInterval[1] (не строгое).",
+["intervals","merge"]);
+
+add("Interval","Merge Intervals","M",
+"Sort by start, жадно merge: start <= prev.end → обновляй end = max.",
+"Sort + linear merge","O(n log n)","O(n)",
+["Сортируй по первому элементу",
+ "result = [intervals[0]]",
+ "Для каждого [s,e]:",
+ "  s <= result[-1][1] → result[-1][1] = max(...)",
+ "  Иначе append"],
+"intervals.sort()\nres=[intervals[0]]\nfor s,e in intervals[1:]:\n    if s<=res[-1][1]:\n        res[-1][1]=max(res[-1][1],e)\n    else:\n        res.append([s,e])\nreturn res",
+"max(end) обязателен: новый интервал может быть полностью внутри предыдущего.",
+["intervals","sort"]);
+
+add("Interval","Non-overlapping Intervals","M",
+"Greedy: sort by end. Жадно бери с наименьшим end. Считай удалённые.",
+"Greedy Activity Selection","O(n log n)","O(1)",
+["Сортируй по end",
+ "prev_end = -inf, count = 0",
+ "s >= prev_end → берём, prev_end = e",
+ "Иначе count++ (удаляем)"],
+"intervals.sort(key=lambda x: x[1])\nprev_end=float('-inf')\ncount=0\nfor s,e in intervals:\n    if s>=prev_end: prev_end=e\n    else: count+=1\nreturn count",
+"Сортировка по END — ключ. По start не работает для activity selection.",
+["greedy","intervals"]);
+
+add("Interval","Meeting Rooms","E",
+"Sort by start. Если следующий начинается до окончания предыдущего — конфликт.",
+"Sort + overlap check","O(n log n)","O(1)",
+["Сортируй по start",
+ "Для i от 1..n:",
+ "  intervals[i][0] < intervals[i-1][1] → return False",
+ "Return True"],
+"intervals.sort()\nfor i in range(1,len(intervals)):\n    if intervals[i][0]<intervals[i-1][1]:\n        return False\nreturn True",
+"< а не <=: одна встреча заканчивается когда начинается другая — это OK.",
+["intervals","sort"]);
+
+add("Interval","Meeting Rooms II","M",
+"Min-heap из end times: если heap[0] <= start — переиспользуй комнату (pop). Иначе добавь новую.",
+"Min-Heap / Greedy","O(n log n)","O(n)",
+["Сортируй по start",
+ "heap = []",
+ "Для каждого [s,e]:",
+ "  heap и heap[0] <= s → heappop",
+ "  heappush(e)",
+ "Return len(heap)"],
+"import heapq\nintervals.sort()\nheap=[]\nfor s,e in intervals:\n    if heap and heap[0]<=s:\n        heapq.heappop(heap)\n    heapq.heappush(heap,e)\nreturn len(heap)",
+"heap хранит только end times. Размер в конце = минимум нужных комнат.",
+["heap","greedy","intervals"]);
+
+// LINKED LIST
+add("Linked List","Reverse a Linked List","E",
+"Три указателя: prev=None, curr=head. Переключай ссылку назад, двигай вперёд.",
+"Iterative 3-pointer","O(n)","O(1)",
+["prev=None, curr=head",
+ "Пока curr:",
+ "  nxt = curr.next",
+ "  curr.next = prev",
+ "  prev, curr = curr, nxt",
+ "Return prev"],
+"prev, curr = None, head\nwhile curr:\n    nxt = curr.next\n    curr.next = prev\n    prev, curr = curr, nxt\nreturn prev",
+"Рекурсия: return new_head снизу, переставляй ссылки при распаковке стека. O(n) space.",
+["linked list","iterative"]);
+
+add("Linked List","Detect Cycle in a Linked List","E",
+"Floyd's: slow=1 шаг, fast=2 шага. Встретились → цикл. Для начала цикла: сбрось slow=head.",
+"Floyd's Cycle Detection","O(n)","O(1)",
+["slow=fast=head",
+ "Пока fast и fast.next:",
+ "  slow=slow.next, fast=fast.next.next",
+ "  Если slow==fast → цикл",
+ "Для начала: slow=head; двигай оба по 1 до встречи"],
+"slow=fast=head\nwhile fast and fast.next:\n    slow,fast=slow.next,fast.next.next\n    if slow==fast:\n        slow2=head\n        while slow!=slow2:\n            slow,slow2=slow.next,slow2.next\n        return slow  # начало цикла\nreturn None",
+"Математическое доказательство: расстояния совпадают — head и точка встречи.",
+["two pointers","cycle"]);
+
+add("Linked List","Merge Two Sorted Lists","E",
+"Dummy node + iteration: сравнивай heads, присоединяй меньший.",
+"Dummy node + linear merge","O(n+m)","O(1)",
+["dummy=ListNode(0), cur=dummy",
+ "Пока оба не null: добавляй меньший, двигай его",
+ "cur.next = l1 or l2 (остаток)",
+ "Return dummy.next"],
+"dummy=ListNode(0)\ncur=dummy\nwhile l1 and l2:\n    if l1.val<=l2.val: cur.next=l1; l1=l1.next\n    else: cur.next=l2; l2=l2.next\n    cur=cur.next\ncur.next=l1 or l2\nreturn dummy.next",
+"cur.next = l1 or l2 присоединяет оставшийся список целиком.",
+["linked list","merge"]);
+
+add("Linked List","Merge K Sorted Lists","H",
+"Min-heap из K элементов: извлекай минимум, добавляй следующий из того же списка.",
+"Min-Heap K-way merge","O(N log K)","O(K)",
+["heap = первые элементы всех K списков",
+ "Пока heap:",
+ "  heappop → добавь в result",
+ "  Если есть next → heappush(next)"],
+"import heapq\nheap=[]\nfor i,node in enumerate(lists):\n    if node: heapq.heappush(heap,(node.val,i,node))\ndummy=cur=ListNode(0)\nwhile heap:\n    val,i,node=heapq.heappop(heap)\n    cur.next=node; cur=cur.next\n    if node.next: heapq.heappush(heap,(node.next.val,i,node.next))\nreturn dummy.next",
+"Кортеж (val, index, node) — index нужен для tie-breaking при одинаковых val.",
+["heap","merge","K-way"]);
+
+add("Linked List","Remove Nth Node From End Of List","M",
+"Two pointers: fast уходит на N+1 шагов вперёд. Оба идут вместе. Slow = предыдущий удаляемому.",
+"Two Pointers с gap N+1","O(n)","O(1)",
+["dummy.next=head, slow=fast=dummy",
+ "Двигай fast на N+1 шагов",
+ "Пока fast: slow=slow.next, fast=fast.next",
+ "slow.next = slow.next.next",
+ "Return dummy.next"],
+"dummy=ListNode(0,head)\nslow=fast=dummy\nfor _ in range(n+1):\n    fast=fast.next\nwhile fast:\n    slow,fast=slow.next,fast.next\nslow.next=slow.next.next\nreturn dummy.next",
+"N+1 шагов (не N) чтобы slow стоял на предыдущем удаляемого.",
+["two pointers","linked list"]);
+
+add("Linked List","Reorder List","M",
+"1) Найди середину. 2) Разверни вторую половину. 3) Merge поочерёдно.",
+"Find middle + Reverse + Merge","O(n)","O(1)",
+["Slow/fast → середина",
+ "Разорви: second=slow.next; slow.next=None",
+ "Разверни second половину",
+ "Merge: берём поочерёдно из first и second"],
+"slow,fast=head,head.next\nwhile fast and fast.next: slow=slow.next; fast=fast.next.next\nsecond=slow.next; slow.next=None\nprev=None\nwhile second: nxt=second.next; second.next=prev; prev=second; second=nxt\nsecond=prev\nfirst=head\nwhile second:\n    t1,t2=first.next,second.next\n    first.next=second; second.next=t1\n    first,second=t1,t2",
+"Разорви связь (slow.next=None) до разворота — иначе reversed list будет содержать весь хвост.",
+["linked list","two pointers"]);
+
+// MATRIX
+add("Matrix","Set Matrix Zeroes","M",
+"Первая строка и столбец как флаги. Отдельно трекай нужно ли обнулять их самих.",
+"In-place O(1) extra space","O(mxn)","O(1)",
+["Проверь: есть ли 0 в row0? В col0? Запомни флагами",
+ "Для (i,j) где i>0,j>0: если 0 → matrix[i][0]=matrix[0][j]=0",
+ "Обнули строки/столбцы по флагам",
+ "В последнюю очередь: обнули row0 и col0 если нужно"],
+"row0=any(matrix[0][j]==0 for j in range(C))\ncol0=any(matrix[i][0]==0 for i in range(R))\nfor i in range(1,R):\n    for j in range(1,C):\n        if matrix[i][j]==0: matrix[i][0]=matrix[0][j]=0\nfor i in range(1,R):\n    if matrix[i][0]==0:\n        for j in range(1,C): matrix[i][j]=0\nfor j in range(1,C):\n    if matrix[0][j]==0:\n        for i in range(1,R): matrix[i][j]=0\nif row0:\n    for j in range(C): matrix[0][j]=0\nif col0:\n    for i in range(R): matrix[i][0]=0",
+"Обрабатывай row0/col0 В ПОСЛЕДНЮЮ очередь — иначе перезапишешь флаги.",
+["matrix","in-place"]);
+
+add("Matrix","Spiral Matrix","M",
+"4 указателя (top/bottom/left/right). Обходи 4 стороны слоями, сужай границы.",
+"Layer-by-layer traversal","O(mxn)","O(1) extra",
+["top=0,bottom=m-1,left=0,right=n-1",
+ "→ top строка (left→right); top++",
+ "↓ right столбец (top→bottom); right--",
+ "← bottom строка если top<=bottom; bottom--",
+ "↑ left столбец если left<=right; left++"],
+"res=[]\nwhile top<=bottom and left<=right:\n    for c in range(left,right+1): res.append(m[top][c]); top+=1\n    for r in range(top,bottom+1): res.append(m[r][right]); right-=1\n    if top<=bottom:\n        for c in range(right,left-1,-1): res.append(m[bottom][c]); bottom-=1\n    if left<=right:\n        for r in range(bottom,top-1,-1): res.append(m[r][left]); left+=1\nreturn res",
+"Проверяй top<=bottom и left<=right перед bottom и left проходами — иначе дубли.",
+["matrix","simulation"]);
+
+add("Matrix","Rotate Image","M",
+"Transpose (swap [i][j] и [j][i]) + reverse каждую строку = 90 clockwise. In-place.",
+"Transpose + Reverse rows","O(n^2)","O(1)",
+["Transpose: for i: for j>i: swap matrix[i][j], matrix[j][i]",
+ "Reverse each row: row.reverse()"],
+"n=len(matrix)\nfor i in range(n):\n    for j in range(i+1,n):\n        matrix[i][j],matrix[j][i]=matrix[j][i],matrix[i][j]\nfor row in matrix:\n    row.reverse()",
+"Counter-clockwise: сначала reverse rows, потом transpose (обратный порядок).",
+["matrix","in-place"]);
+
+add("Matrix","Word Search","M",
+"DFS backtracking из каждой ячейки. Помечай '#', восстанавливай после возврата.",
+"DFS Backtracking","O(mxn x 4^L)","O(L) стек",
+["Для каждой (i,j): если == word[0] → dfs",
+ "dfs(r,c,k): k==len(word) → True",
+ "Boundary + visited ('#') check",
+ "Замени на '#', рекурси в 4 стороны, восстанови"],
+"def dfs(r,c,k):\n    if k==len(word): return True\n    if r<0 or r>=R or c<0 or c>=C or board[r][c]!=word[k]: return False\n    tmp,board[r][c]=board[r][c],'#'\n    res=dfs(r+1,c,k+1) or dfs(r-1,c,k+1) or dfs(r,c+1,k+1) or dfs(r,c-1,k+1)\n    board[r][c]=tmp\n    return res\nfor r in range(R):\n    for c in range(C):\n        if dfs(r,c,0): return True\nreturn False",
+"Восстанавливай символ после dfs — другие пути иначе видят '#'.",
+["dfs","backtracking","matrix"]);
+
+// STRING
+add("String","Longest Substring Without Repeating Characters","M",
+"Sliding window + HashMap: при дубле двигай left за предыдущую позицию символа.",
+"Sliding Window + HashMap","O(n)","O(min(m,n))",
+["left=0, res=0, seen={}",
+ "Для right, c:",
+ "  c в seen и seen[c] >= left → left=seen[c]+1",
+ "  seen[c]=right",
+ "  res=max(res, right-left+1)"],
+"left=res=0\nseen={}\nfor right,c in enumerate(s):\n    if c in seen and seen[c]>=left:\n        left=seen[c]+1\n    seen[c]=right\n    res=max(res,right-left+1)\nreturn res",
+"left = max(left, seen[c]+1) — окно не должно сжиматься назад.",
+["sliding window","hash map"]);
+
+add("String","Longest Repeating Character Replacement","M",
+"Sliding window: window_size - max_count <= k. Если нет — сдвигай left.",
+"Sliding Window","O(n)","O(1)",
+["count={}, max_count=0, left=0, res=0",
+ "Для right, c: count[c]++",
+ "max_count = max(max_count, count[c])",
+ "Если (right-left+1) - max_count > k: count[s[left]]--, left++",
+ "res = max(res, right-left+1)"],
+"count={}\nmax_count=left=res=0\nfor right,c in enumerate(s):\n    count[c]=count.get(c,0)+1\n    max_count=max(max_count,count[c])\n    if (right-left+1)-max_count>k:\n        count[s[left]]-=1; left+=1\n    res=max(res,right-left+1)\nreturn res",
+"max_count не уменьшаем при сдвиге left — ищем только большее значение.",
+["sliding window"]);
+
+add("String","Minimum Window Substring","H",
+"Sliding window: need/have counts. Сжимай когда formed==required.",
+"Sliding Window с counters","O(|s|+|t|)","O(|s|+|t|)",
+["need=Counter(t), have={}, formed=0, required=len(need)",
+ "Расширяй right: char в need и count совпал → formed--",
+ "Пока formed==0: обновляй min_window, сдвигай left",
+ "Return min_window"],
+"from collections import Counter\nneed,have=Counter(t),{}\nformed=required=len(need)\nres,res_len=[-1,-1],float('inf')\nl=0\nfor r,c in enumerate(s):\n    have[c]=have.get(c,0)+1\n    if c in need and have[c]==need[c]: formed-=1\n    while formed==0:\n        if r-l+1<res_len: res_len=r-l+1; res=[l,r]\n        have[s[l]]-=1\n        if s[l] in need and have[s[l]]<need[s[l]]: formed+=1\n        l+=1\nreturn s[res[0]:res[1]+1] if res_len!=float('inf') else ''",
+"formed считает символы с ДОСТАТОЧНЫМ количеством, не все символы отдельно.",
+["sliding window","hard"]);
+
+add("String","Valid Anagram","E",
+"Одинаковые частоты всех символов = анаграмма. Counter или массив [26].",
+"Counter comparison","O(n)","O(1) — 26 символов",
+["Если len(s)!=len(t) → False",
+ "count[26] = 0",
+ "Для каждого i: count[s[i]]++, count[t[i]]--",
+ "Если любой count[i]!=0 → False"],
+"# Python one-liner\nreturn Counter(s) == Counter(t)\n\n# O(1) space\nif len(s)!=len(t): return False\ncount=[0]*26\nfor a,b in zip(s,t):\n    count[ord(a)-97]+=1; count[ord(b)-97]-=1\nreturn all(c==0 for c in count)",
+"Если возможны Unicode символы — Counter безопаснее массива [26].",
+["hash map","counter"]);
+
+add("String","Group Anagrams","M",
+"Ключ = sorted(word). Все слова с одинаковым ключом — одна группа.",
+"HashMap с sorted ключом","O(n x k log k)","O(nxk)",
+["groups = defaultdict(list)",
+ "Для каждого слова: key = tuple(sorted(word))",
+ "groups[key].append(word)",
+ "Return list(groups.values())"],
+"from collections import defaultdict\ngroups=defaultdict(list)\nfor word in strs:\n    key=tuple(sorted(word))\n    groups[key].append(word)\nreturn list(groups.values())",
+"Вместо sorted можно count[26] как ключ — O(nxk) но сложнее читать.",
+["hash map","sorting"]);
+
+add("String","Valid Parentheses","E",
+"Stack: push открывающие. При закрывающей проверяй top = парный символ.",
+"Stack","O(n)","O(n)",
+["stack=[], map={')':'(', '}':'{', ']':'['}",
+ "Для char:",
+ "  Если закрывающий: стек пустой или pop != map[char] → False",
+ "  Иначе push",
+ "Return not stack"],
+"stack=[]\nmp={')':'(', '}':'{', ']':'['}\nfor c in s:\n    if c in mp:\n        if not stack or stack[-1]!=mp[c]: return False\n        stack.pop()\n    else:\n        stack.append(c)\nreturn not stack",
+"Пустой стек при встрече закрывающей = invalid. Непустой в конце = invalid.",
+["stack"]);
+
+add("String","Valid Palindrome","E",
+"Two pointers: скипай non-alnum символы, сравнивай lowercase с обоих концов.",
+"Two Pointers + isalnum","O(n)","O(1)",
+["l=0, r=len(s)-1",
+ "Пока l<r:",
+ "  Скипай non-alnum с обоих сторон",
+ "  s[l].lower() != s[r].lower() → False",
+ "  l++, r--"],
+"l,r=0,len(s)-1\nwhile l<r:\n    while l<r and not s[l].isalnum(): l+=1\n    while l<r and not s[r].isalnum(): r-=1\n    if s[l].lower()!=s[r].lower(): return False\n    l+=1; r-=1\nreturn True",
+"isalnum() включает цифры — оба типа валидны для palindrome check.",
+["two pointers"]);
+
+add("String","Longest Palindromic Substring","M",
+"Expand Around Center: для каждого центра разворачивай. Odd и even центры.",
+"Expand Around Center","O(n^2)","O(1)",
+["Для каждого i:",
+ "  expand(i,i) — нечётные",
+ "  expand(i,i+1) — чётные",
+ "  expand: пока s[l]==s[r]: l--, r++",
+ "  Обновляй res при каждом расширении"],
+"res=''\nfor i in range(len(s)):\n    for l,r in [(i,i),(i,i+1)]:\n        while l>=0 and r<len(s) and s[l]==s[r]:\n            if r-l+1>len(res): res=s[l:r+1]\n            l-=1; r+=1\nreturn res",
+"DP решение O(n^2) time но O(n^2) space. Expand лучше.",
+["expand around center"]);
+
+add("String","Palindromic Substrings","M",
+"Expand Around Center: count++ при каждом успешном расширении.",
+"Expand Around Center","O(n^2)","O(1)",
+["count = 0",
+ "Для каждого центра (2n-1 центров):",
+ "  Разворачивай пока palindrome: l--, r++",
+ "  Каждое расширение: count++"],
+"count=0\nfor i in range(len(s)):\n    for l,r in [(i,i),(i,i+1)]:\n        while l>=0 and r<len(s) and s[l]==s[r]:\n            count+=1; l-=1; r+=1\nreturn count",
+"2n-1 центров: n нечётных + (n-1) чётных. Не забудь оба варианта.",
+["expand around center"]);
+
+add("String","Encode and Decode Strings","M",
+"Кодируй как 'длина#строка' — '#' может быть в строке, но длина предохраняет.",
+"Length-prefix encoding","O(n)","O(n)",
+["encode: join(f'{len(s)}#{s}' for s in strs)",
+ "decode: i=0; j=index('#' от i); length=int(s[i:j])",
+ "  res.append(s[j+1:j+1+length]); i=j+1+length"],
+"def encode(strs):\n    return ''.join(str(len(s))+'#'+s for s in strs)\n\ndef decode(s):\n    res,i=[],0\n    while i<len(s):\n        j=s.index('#',i)\n        l=int(s[i:j])\n        res.append(s[j+1:j+1+l])\n        i=j+1+l\n    return res",
+"Сплит по '#' не работает — '#' может быть в строке. Длина + смещение надёжнее.",
+["string encoding"]);
+
+// TREE
+add("Tree","Maximum Depth of Binary Tree","E",
+"DFS: глубина = 1 + max(depth(left), depth(right)). База: None = 0.",
+"DFS recursion / BFS level count","O(n)","O(h)",
+["return 0 if not root",
+ "return 1 + max(maxDepth(root.left), maxDepth(root.right))"],
+"def maxDepth(root):\n    if not root: return 0\n    return 1+max(maxDepth(root.left),maxDepth(root.right))",
+"BFS: глубина = количество уровней. DFS элегантнее.",
+["dfs","recursion"]);
+
+add("Tree","Same Tree","E",
+"Рекурсивно: оба None = True. Один None или разные val = False. Рекурси в оба.",
+"DFS recursion","O(n)","O(h)",
+["Оба None → True",
+ "Один None → False",
+ "p.val != q.val → False",
+ "Return same(p.left,q.left) and same(p.right,q.right)"],
+"def isSameTree(p,q):\n    if not p and not q: return True\n    if not p or not q: return False\n    if p.val!=q.val: return False\n    return isSameTree(p.left,q.left) and isSameTree(p.right,q.right)",
+"Порядок проверок важен: сначала оба None, потом один None, потом val.",
+["dfs","recursion"]);
+
+add("Tree","Invert/Flip Binary Tree","E",
+"Рекурсивно: swap left и right, рекурси в оба. Одна строка.",
+"DFS recursion","O(n)","O(h)",
+["Если None → return None",
+ "root.left, root.right = invert(root.right), invert(root.left)",
+ "Return root"],
+"def invertTree(root):\n    if not root: return None\n    root.left,root.right=invertTree(root.right),invertTree(root.left)\n    return root",
+"BFS-версия: добавляй в очередь, свапай children при обработке.",
+["dfs","recursion"]);
+
+add("Tree","Binary Tree Maximum Path Sum","H",
+"Post-order DFS: gain() возвращает max вклад вниз. Global max = left+right+val.",
+"Post-order DFS с global max","O(n)","O(h)",
+["max_sum = -inf (global)",
+ "gain(node): если None → 0",
+ "lg = max(gain(left), 0), rg = max(gain(right), 0)",
+ "max_sum = max(max_sum, node.val + lg + rg)",
+ "Return node.val + max(lg, rg) — только ОДИН путь"],
+"res=[float('-inf')]\ndef gain(node):\n    if not node: return 0\n    lg=max(gain(node.left),0)\n    rg=max(gain(node.right),0)\n    res[0]=max(res[0],node.val+lg+rg)\n    return node.val+max(lg,rg)\ngain(root)\nreturn res[0]",
+"gain() возвращает только одно направление. max_sum обновляется внутри для пути через node.",
+["dfs","post-order","hard"]);
+
+add("Tree","Binary Tree Level Order Traversal","M",
+"BFS: фиксируй len(queue) в начале уровня — обрабатывай ровно столько элементов.",
+"BFS с level tracking","O(n)","O(n)",
+["queue=deque([root]), res=[]",
+ "Пока queue: level_size=len(queue), level=[]",
+ "N раз: pop, добавь в level, push children",
+ "res.append(level)"],
+"from collections import deque\nres=[]\nq=deque([root])\nwhile q:\n    level=[]\n    for _ in range(len(q)):\n        node=q.popleft()\n        level.append(node.val)\n        if node.left: q.append(node.left)\n        if node.right: q.append(node.right)\n    res.append(level)\nreturn res",
+"Фиксируй len(q) ДО цикла — в процессе добавления len меняется.",
+["BFS","level order"]);
+
+add("Tree","Serialize and Deserialize Binary Tree","H",
+"Preorder DFS: val или 'N' для null. Deserialize: consume токены через iter().",
+"Preorder serialization","O(n)","O(n)",
+["serialize: preorder DFS, None → 'N', join через ','",
+ "deserialize: split, iter()",
+ "Рекурсивно: next(vals) = current node"],
+"def serialize(root):\n    res=[]\n    def dfs(n):\n        if not n: res.append('N'); return\n        res.append(str(n.val))\n        dfs(n.left); dfs(n.right)\n    dfs(root); return ','.join(res)\n\ndef deserialize(data):\n    vals=iter(data.split(','))\n    def dfs():\n        v=next(vals)\n        if v=='N': return None\n        node=TreeNode(int(v))\n        node.left,node.right=dfs(),dfs()\n        return node\n    return dfs()",
+"iter() + next() — элегантный consume без передачи индекса в рекурсии.",
+["dfs","serialization","hard"]);
+
+add("Tree","Subtree of Another Tree","E",
+"isSameTree как subroutine. Для каждого узла s: isSameTree(s, t). Рекурси дальше если нет.",
+"DFS + isSameTree","O(mxn)","O(h)",
+["isSubtree(s,t): если not s → False",
+ "Если isSameTree(s,t) → True",
+ "Return isSubtree(s.left,t) or isSubtree(s.right,t)"],
+"def isSubtree(root,subRoot):\n    if not root: return False\n    if isSameTree(root,subRoot): return True\n    return isSubtree(root.left,subRoot) or isSubtree(root.right,subRoot)",
+"O(mxn) — для каждого из m узлов потенциально O(n) сравнений.",
+["dfs","recursion"]);
+
+add("Tree","Construct Binary Tree from Preorder and Inorder","M",
+"preorder[0]=root. Найди root в inorder → делит на left/right. Рекурси.",
+"Divide by inorder root position","O(n) с HashMap","O(n)",
+["HashMap: val → index в inorder",
+ "root = preorder[pre_l]",
+ "mid = map[root.val], left_size = mid - in_l",
+ "Рекурси для left и right с правильными диапазонами"],
+"idx_map={v:i for i,v in enumerate(inorder)}\ndef build(pre_l,in_l,in_r):\n    if pre_l>len(preorder)-1 or in_l>in_r: return None\n    root=TreeNode(preorder[pre_l])\n    mid=idx_map[root.val]\n    ls=mid-in_l\n    root.left=build(pre_l+1,in_l,mid-1)\n    root.right=build(pre_l+ls+1,mid+1,in_r)\n    return root\nreturn build(0,0,len(inorder)-1)",
+"pre_l для правого = pre_l + left_size + 1. Не забудь +1.",
+["dfs","divide"]);
+
+add("Tree","Validate Binary Search Tree","M",
+"DFS с границами: каждый узел в (lo, hi). Обновляй при спуске.",
+"DFS with bounds propagation","O(n)","O(h)",
+["validate(node, lo=-inf, hi=inf)",
+ "node.val <= lo или >= hi → False",
+ "validate(left, lo, node.val)",
+ "validate(right, node.val, hi)"],
+"def isValidBST(root,lo=float('-inf'),hi=float('inf')):\n    if not root: return True\n    if not (lo<root.val<hi): return False\n    return isValidBST(root.left,lo,root.val) and isValidBST(root.right,root.val,hi)",
+"Нельзя сравнивать только с parent — нарушение может быть от предка выше.",
+["dfs","BST"]);
+
+add("Tree","Kth Smallest Element in a BST","M",
+"Inorder BST = отсортировано. Итеративный inorder позволяет остановиться на k-м.",
+"Iterative Inorder DFS","O(H+k)","O(H)",
+["stack=[], curr=root",
+ "Пока curr или stack:",
+ "  Push all left: while curr: push, curr=curr.left",
+ "  Pop: k--, если k==0 → return curr.val",
+ "  curr=curr.right"],
+"stack=[]\ncurr=root\nwhile curr or stack:\n    while curr:\n        stack.append(curr); curr=curr.left\n    curr=stack.pop()\n    k-=1\n    if k==0: return curr.val\n    curr=curr.right",
+"Итеративная версия останавливается на k-м без обхода всего дерева.",
+["BST","inorder"]);
+
+add("Tree","Lowest Common Ancestor of BST","M",
+"BST свойство: оба < root → влево. Оба > root → вправо. Иначе root = LCA.",
+"BST property traversal","O(H)","O(1)",
+["Пока root:",
+ "  p.val < root.val и q.val < root.val → root=root.left",
+ "  p.val > root.val и q.val > root.val → root=root.right",
+ "  Иначе return root"],
+"while root:\n    if p.val<root.val and q.val<root.val:\n        root=root.left\n    elif p.val>root.val and q.val>root.val:\n        root=root.right\n    else:\n        return root",
+"Только для BST! Для обычного дерева нужен DFS с backtracking.",
+["BST"]);
+
+add("Tree","Implement Trie (Prefix Tree)","M",
+"TrieNode: dict children + is_end флаг. Insert/Search/StartsWith — O(L).",
+"Trie data structure","O(L) per op","O(NxL) total",
+["TrieNode: children={}, end=False",
+ "insert: setdefault на каждый символ, end=True",
+ "search: traverse + check end",
+ "startsWith: traverse only → return True"],
+"class TrieNode:\n    def __init__(self): self.children={}; self.end=False\nclass Trie:\n    def __init__(self): self.root=TrieNode()\n    def insert(self,w):\n        cur=self.root\n        for c in w: cur=cur.children.setdefault(c,TrieNode())\n        cur.end=True\n    def search(self,w):\n        cur=self.root\n        for c in w:\n            if c not in cur.children: return False\n            cur=cur.children[c]\n        return cur.end\n    def startsWith(self,p):\n        cur=self.root\n        for c in p:\n            if c not in cur.children: return False\n            cur=cur.children[c]\n        return True",
+"search vs startsWith: идентичный traverse, только search проверяет end.",
+["trie","design"]);
+
+add("Tree","Add and Search Word","M",
+"Trie + DFS для '.': при точке рекурсивно пробуй все children.",
+"Trie + DFS wildcard","O(L) обычный","O(26^L) worst case",
+["Trie как обычно",
+ "search: DFS через ноды",
+ "При '.': попробуй все children рекурсивно",
+ "При обычном символе: обычный traverse"],
+"def search(self,word):\n    def dfs(j,node):\n        for i in range(j,len(word)):\n            c=word[i]\n            if c=='.':\n                return any(dfs(i+1,child) for child in node.children.values())\n            if c not in node.children: return False\n            node=node.children[c]\n        return node.end\n    return dfs(0,self.root)",
+"'.' даёт экспоненциальный search в worst case — важно знать это ограничение.",
+["trie","dfs","wildcard"]);
+
+add("Tree","Word Search II","H",
+"Trie из words + DFS по матрице. Trie: pruning если нет prefix. Удаляй найденные слова.",
+"Trie + Backtracking DFS","O(mxn x 4x3^(L-1))","O(WxL)",
+["Построй Trie из words",
+ "DFS из каждой ячейки: трекай current trie node",
+ "is_end → добавь слово, сбрось флаг",
+ "Char не в children → prune",
+ "Помечай '#', восстанавливай"],
+"# Insert all words into Trie\ndef dfs(r,c,node,path):\n    if node.word:\n        res.append(node.word); node.word=None\n    if r<0 or r>=R or c<0 or c>=C or board[r][c] not in node.children: return\n    tmp,board[r][c]=board[r][c],'#'\n    for dr,dc in [(0,1),(0,-1),(1,0),(-1,0)]:\n        dfs(r+dr,c+dc,node.children[tmp],path+tmp)\n    board[r][c]=tmp",
+"Сбрасывай node.word после добавления — иначе дублируешь одно слово.",
+["trie","dfs","hard"]);
+
+// HEAP
+add("Heap","Top K Frequent Elements","M",
+"Counter + nlargest(k). Или bucket sort O(n): freq → список. Собери с конца.",
+"Min-Heap или Bucket Sort","O(n log k) heap","O(n) bucket",
+["Bucket sort:",
+ "count=Counter(nums)",
+ "buckets=[[] for _ in range(n+1)]",
+ "Для num,freq: buckets[freq].append(num)",
+ "Собирай с конца пока не накопишь k"],
+"count=Counter(nums)\nbuckets=[[] for _ in range(len(nums)+1)]\nfor num,freq in count.items():\n    buckets[freq].append(num)\nres=[]\nfor i in range(len(buckets)-1,0,-1):\n    res.extend(buckets[i])\n    if len(res)>=k: return res[:k]\n\n# Heap O(n log k)\nreturn [x for x,_ in Counter(nums).most_common(k)]",
+"Bucket sort гениально, но работает только если freq <= n (всегда верно).",
+["heap","counter","bucket sort"]);
+
+add("Heap","Find Median from Data Stream","H",
+"Two heaps: max-heap (нижняя) + min-heap (верхняя). Балансируй после каждого insert.",
+"Two Heaps","O(log n) addNum","O(1) findMedian",
+["small=max-heap (негейти), large=min-heap",
+ "addNum: push в small",
+ "Если small.top > large.top → перенеси",
+ "Балансируй размеры (разница <= 1)",
+ "findMedian: равные → avg, иначе top большего"],
+"import heapq\nclass MedianFinder:\n    def __init__(self): self.small,self.large=[],[]\n    def addNum(self,n):\n        heapq.heappush(self.small,-n)\n        if self.small and self.large and (-self.small[0])>self.large[0]:\n            heapq.heappush(self.large,-heapq.heappop(self.small))\n        if len(self.small)>len(self.large)+1:\n            heapq.heappush(self.large,-heapq.heappop(self.small))\n        elif len(self.large)>len(self.small):\n            heapq.heappush(self.small,-heapq.heappop(self.large))\n    def findMedian(self):\n        if len(self.small)==len(self.large): return(-self.small[0]+self.large[0])/2\n        return -self.small[0]",
+"Python: max-heap = нагейти числа. small всегда size >= large.",
+["heap","design","hard"]);
+
+// ===== APP =====
+var COLORS = {
+  "Array":"#00e5ff","Binary":"#a78bfa","Dynamic Programming":"#fb923c",
+  "Graph":"#4ade80","Interval":"#f472b6","Linked List":"#facc15",
+  "Matrix":"#38bdf8","String":"#e879f9","Tree":"#34d399","Heap":"#f87171"
+};
+var cats = [...new Set(P.map(function(p){return p.cat}))];
+var activeFilter = "All";
+var searchQuery = "";
+
+var overlay = document.getElementById("overlay");
+var mcontent = document.getElementById("mcontent");
+
+function openModal(p) {
+  var color = COLORS[p.cat] || "#00e5ff";
+  var diffLabel = {E:"Easy",M:"Medium",H:"Hard",P:"Premium"}[p.diff];
+  var stepsHTML = p.steps.map(function(s){return "<li>"+s+"</li>"}).join("");
+  var safeCode = p.code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  mcontent.innerHTML =
+    "<div class='m-title'>"+p.title+"</div>"+
+    "<div style='display:flex;align-items:center;gap:8px;margin-bottom:16px'>"+
+      "<span class='diff "+p.diff+"'>"+diffLabel+"</span>"+
+      "<span class='m-cat' style='color:"+color+";border:0;padding:0;margin:0'>▸ "+p.cat+"</span>"+
+    "</div>"+
+    "<div class='m-idea'>"+p.idea+"</div>"+
+    "<div class='m-sec'><div class='m-lbl'>Pattern</div><div class='m-txt'>"+p.pattern+"</div></div>"+
+    "<div class='m-sec'><div class='m-lbl'>Complexity</div><div class='cplx'>"+
+      "<div class='citem'><div class='cl'>Time</div><div class='cv'>"+p.tc+"</div></div>"+
+      "<div class='citem'><div class='cl'>Space</div><div class='cv'>"+p.sc+"</div></div>"+
+    "</div></div>"+
+    "<div class='m-sec'><div class='m-lbl'>Steps</div><ol class='steps'>"+stepsHTML+"</ol></div>"+
+    "<div class='m-sec'><div class='m-lbl'>Pseudocode</div><div class='code'>"+safeCode+"</div></div>"+
+    "<div class='m-sec'><div class='m-lbl'>⚠ Gotcha</div><div class='gotcha'>"+p.gotcha+"</div></div>"+
+    "<div class='m-tags'>"+p.tags.map(function(t){return "<span class='tag'>"+t+"</span>"}).join("")+"</div>";
+  overlay.classList.add("open");
+  document.getElementById("modal").scrollTop = 0;
+}
+
+document.getElementById("mclose").addEventListener("click", function(){overlay.classList.remove("open")});
+overlay.addEventListener("click", function(e){if(e.target===overlay)overlay.classList.remove("open")});
+document.addEventListener("keydown", function(e){if(e.key==="Escape")overlay.classList.remove("open")});
+
+document.getElementById("fsBtn").addEventListener("click", function(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen && document.exitFullscreen();
+  }
+});
+document.addEventListener("fullscreenchange", function(){
+  document.getElementById("fsBtn").textContent = document.fullscreenElement ? "⛶ Exit" : "⛶ Fullscreen";
+});
+
+function render() {
+  var q = searchQuery.toLowerCase();
+  var filtered = P.filter(function(p){
+    var mc = activeFilter==="All" || p.cat===activeFilter;
+    var ms = !q || p.title.toLowerCase().includes(q) || p.idea.toLowerCase().includes(q) ||
+             p.cat.toLowerCase().includes(q) || p.tags.some(function(t){return t.includes(q)});
+    return mc && ms;
+  });
+
+  document.getElementById("count").textContent = filtered.length+" / "+P.length;
+
+  var grouped = {};
+  filtered.forEach(function(p){
+    if(!grouped[p.cat]) grouped[p.cat]=[];
+    grouped[p.cat].push(p);
+  });
+
+  var main = document.getElementById("main");
+  if(filtered.length===0){main.innerHTML="<div class='empty'>// no results</div>";return;}
+
+  var html = "";
+  Object.keys(grouped).forEach(function(cat){
+    var probs = grouped[cat];
+    var color = COLORS[cat];
+    html += "<div class='cat-block'>";
+    html += "<div class='cat-title' style='color:"+color+"'>"+
+      "<span style='background:"+color+";width:8px;height:8px;display:inline-block;border-radius:1px;flex-shrink:0'></span>"+
+      cat+" <span style='color:#2a2a2a'>——</span> <span style='color:#666'>"+probs.length+" задач</span></div>";
+    html += "<div class='cards'>";
+    probs.forEach(function(p){
+      var diffLabel = {E:"Easy",M:"Medium",H:"Hard",P:"Premium"}[p.diff];
+      html += "<div class='card' data-title='"+p.title.replace(/'/g,"&#39;")+"'>"+
+        "<div class='card-header'>"+
+          "<div class='card-title'>"+p.title+"</div>"+
+          "<span class='diff "+p.diff+"'>"+diffLabel+"</span>"+
+        "</div>"+
+        "<div class='card-idea'>"+p.idea+"</div>"+
+        "<div class='card-meta'>"+
+          "<span class='card-pattern' style='color:"+color+"'>"+p.pattern+"</span>"+
+          "<span style='color:#333'>·</span>"+
+          "<span class='card-tc'>"+p.tc+"</span>"+
+        "</div>"+
+        "<div style='margin-top:6px'>"+p.tags.slice(0,3).map(function(t){return "<span class='tag'>"+t+"</span>"}).join("")+"</div>"+
+        "<div class='card-hint'>↗ кликни для деталей</div>"+
+      "</div>";
+    });
+    html += "</div></div>";
+  });
+  main.innerHTML = html;
+
+  // Bind clicks
+  var allCards = main.querySelectorAll(".card");
+  var fi = 0;
+  Object.keys(grouped).forEach(function(cat){
+    grouped[cat].forEach(function(p){
+      (function(prob, card){ card.addEventListener("click", function(){openModal(prob)}); })(p, allCards[fi]);
+      fi++;
+    });
+  });
+}
+
+// Filters
+var filtersEl = document.getElementById("filters");
+["All"].concat(cats).forEach(function(cat){
+  var btn = document.createElement("button");
+  btn.className = "fbtn" + (cat==="All"?" active":"");
+  btn.textContent = cat;
+  btn.addEventListener("click", function(){
+    activeFilter = cat;
+    document.querySelectorAll(".fbtn").forEach(function(b){b.classList.remove("active")});
+    btn.classList.add("active");
+    render();
+  });
+  filtersEl.appendChild(btn);
+});
+
+document.getElementById("search").addEventListener("input", function(e){
+  searchQuery = e.target.value;
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
