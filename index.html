@@ -447,16 +447,16 @@ add("Dynamic Programming","Combination Sum","M",
 
 add("Dynamic Programming","House Robber","M",
 "Максимизировать сумму ограбленных домов без ограбления двух соседних.",
-"dp[i] = max(взять i + dp[i-2], пропустить + dp[i-1]). Только две переменные.",
+"dp[i] = макс. сумма для домов 0..i. Берём i → nums[i]+dp[i-2], пропускаем → dp[i-1]. Сжимается до двух переменных.",
 "1D DP rolling variables","O(n)","O(1)",
 [
- "a=0, b=0 (dp[i-2], dp[i-1])",
- "Для каждого num:",
- "  a, b = b, max(b, a+num)",
- "Return b"],
-"let a = 0, b = 0\nfor (const num of nums)\na, b = b, Math.max(b, a+num)\nreturn b",
+ "dp[i] = лучшая сумма на префиксе до i",
+ "Взять дом i: nums[i] + dp[i-2]",
+ "Пропустить дом i: dp[i-1]",
+ "dp[i] = max(оба варианта); храни только dp[i-2] и dp[i-1]"],
+"// dp[i] = max(взять i, пропустить i)\nlet a = dp[i-2], b = dp[i-1]\nfor (num) [a, b] = [b, max(b, a + num)]\nreturn b",
 "function rob(nums) {\n  let a = 0, b = 0;\n  for (const n of nums) [a, b] = [b, Math.max(b, a + n)];\n  return b;\n}",
-"Нет запрета брать 3 подряд — просто математически невыгодно.",
+"Запрет только на соседей, не на «через один»: [0,2,4] — ок, [0,2,3] — нет (2 и 3 рядом). a/b = dp[i-2]/dp[i-1], не текущий дом.",
 [
  "dp"]);
 
