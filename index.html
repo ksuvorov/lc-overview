@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LeetCode Reference</title>
+<title>LeetCode Reference — JavaScript</title>
 <style>
   :root {
     --bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:#2a2a2a;
@@ -39,7 +39,8 @@
   .M{background:rgba(245,158,11,.15);color:var(--medium)}
   .H{background:rgba(239,68,68,.15);color:var(--hard)}
   .P{background:rgba(124,58,237,.15);color:#a78bfa}
-  .card-idea{margin-top:7px;color:#aaa;font-size:12px;line-height:1.55}
+  .card-desc{margin-top:7px;color:#bbb;font-size:12px;line-height:1.55}
+  .card-idea{margin-top:5px;color:#888;font-size:11px;line-height:1.5;font-style:italic}
   .card-meta{margin-top:7px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .card-pattern{font-size:10px;letter-spacing:.05em}
   .card-tc{color:var(--muted);font-size:10px}
@@ -55,6 +56,7 @@
   .mclose:hover{border-color:var(--accent);color:var(--accent)}
   .m-title{font-size:19px;font-weight:700;margin-bottom:4px}
   .m-cat{font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+  .m-desc{background:#111;border:1px solid var(--border);border-radius:4px;color:#bbb;font-size:13px;line-height:1.65;margin-bottom:12px;padding:11px 15px}
   .m-idea{background:#0d0d0d;border-left:3px solid var(--accent);border-radius:0 4px 4px 0;color:#ccc;font-size:13px;line-height:1.65;margin-bottom:18px;padding:11px 15px}
   .m-sec{margin-bottom:16px}
   .m-lbl{color:var(--accent);font-size:10px;font-weight:700;letter-spacing:.14em;margin-bottom:7px;text-transform:uppercase}
@@ -63,6 +65,11 @@
   .steps li{counter-increment:s;display:flex;gap:10px;align-items:flex-start;margin-bottom:7px;color:#ccc;font-size:13px;line-height:1.6}
   .steps li::before{content:counter(s);background:#1e1e2e;border:1px solid var(--border);border-radius:3px;color:var(--accent);flex-shrink:0;font-size:10px;font-weight:700;min-width:20px;padding:2px 5px;text-align:center;margin-top:2px}
   .code{background:#080808;border:1px solid #1e1e1e;border-radius:4px;color:#a8d8a8;font-family:inherit;font-size:12px;line-height:1.7;margin-top:8px;padding:12px 14px;white-space:pre;overflow-x:auto}
+  .code-sketch{color:#8ec88e}
+  .code-full{display:none;margin-top:8px}
+  .code-full.open{display:block}
+  .code-toggle{background:#1a1a1a;border:1px solid var(--border);border-radius:3px;color:var(--muted);cursor:pointer;font-family:inherit;font-size:10px;letter-spacing:.08em;margin-top:8px;padding:5px 10px;text-transform:uppercase;transition:all .15s}
+  .code-toggle:hover{border-color:var(--accent);color:var(--accent)}
   .gotcha{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:4px;color:#fca5a5;font-size:13px;line-height:1.6;padding:11px 14px}
   .cplx{display:flex;gap:12px}
   .citem{background:#0d0d0d;border:1px solid var(--border);border-radius:4px;padding:7px 13px;flex:1}
@@ -73,7 +80,7 @@
 </head>
 <body>
 <header>
-  <h1>LeetCode <span>// quick ref</span></h1>
+  <h1>LeetCode <span>// quick ref · JS</span></h1>
   <div class="controls">
     <input id="search" type="text" placeholder="Поиск...">
     <div class="filters" id="filters"></div>
@@ -93,864 +100,1231 @@
 
 <script>
 var P = [];
-function add(cat,title,diff,idea,pattern,tc,sc,steps,code,gotcha,tags){
-  P.push({cat:cat,title:title,diff:diff,idea:idea,pattern:pattern,tc:tc,sc:sc,steps:steps,code:code,gotcha:gotcha,tags:tags});
+function add(cat,title,diff,desc,idea,pattern,tc,sc,steps,sketch,full,gotcha,tags){
+  P.push({cat:cat,title:title,diff:diff,desc:desc,idea:idea,pattern:pattern,tc:tc,sc:sc,steps:steps,sketch:sketch,full:full,gotcha:gotcha,tags:tags});
 }
+function escCode(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
 // ARRAY
 add("Array","Two Sum","E",
+"Найти два индекса в массиве, сумма элементов которых равна target.",
 "HashMap: для каждого x ищи complement = target - x. Один проход O(n).",
 "Hash Map / Complement lookup","O(n)","O(n)",
-["Итерируй массив с индексом i",
+[
+ "Итерируй массив с индексом i",
  "complement = target - nums[i]",
  "Если complement в map → return [map[complement], i]",
  "Иначе map[nums[i]] = i"],
-"map = {}\nfor i, num in enumerate(nums):\n    comp = target - num\n    if comp in map:\n        return [map[comp], i]\n    map[num] = i",
+"for (let i = 0; i < nums.length; i++)\nconst comp = target - nums[i]\nif (map.has(comp)) return [map.get(comp), i]\nmap.set(nums[i], i)",
+"function twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const comp = target - nums[i];\n    if (map.has(comp)) return [map.get(comp), i];\n    map.set(nums[i], i);\n  }\n}",
 "Сначала проверяй map, потом добавляй — иначе используешь один индекс дважды.",
-["hash map","one-pass"]);
+[
+ "hash map",
+ "one-pass"]);
 
 add("Array","Best Time to Buy and Sell Stock","E",
+"Найти максимальную прибыль от одной покупки и одной продажи акции.",
 "Greedy: трекай min_price слева, на каждом шаге считай potential profit.",
 "Greedy / min pointer","O(n)","O(1)",
-["min_p = inf, max_p = 0",
+[
+ "min_p = inf, max_p = 0",
  "Для каждой цены: обнови min_p",
  "profit = price - min_p",
  "max_p = max(max_p, profit)"],
-"min_p, max_p = float('inf'), 0\nfor p in prices:\n    min_p = min(min_p, p)\n    max_p = max(max_p, p - min_p)\nreturn max_p",
+"min_p = Infinity, max_p = 0\nminP = Math.min(minP, price)\nprofit = price - minP\nmaxP = Math.max(maxP, profit)",
+"function maxProfit(prices) {\n  let minP = Infinity, maxP = 0;\n  for (const p of prices) {\n    minP = Math.min(minP, p);\n    maxP = Math.max(maxP, p - minP);\n  }\n  return maxP;\n}",
 "Сначала обновляем min, потом profit — покупка должна быть ДО продажи.",
-["greedy"]);
+[
+ "greedy"]);
 
 add("Array","Contains Duplicate","E",
+"Определить, есть ли в массиве повторяющиеся элементы.",
 "HashSet: добавляй по одному — если элемент уже есть, return True.",
 "HashSet","O(n)","O(n)",
-["Создай set",
+[
+ "Создай set",
  "Для каждого num: если в set → return True",
  "Иначе добавь в set",
  "Return False"],
-"seen = set()\nfor n in nums:\n    if n in seen: return True\n    seen.add(n)\nreturn False",
+"const seen = new Set()\nif (seen.has(n)) return true\nseen.add(n)\nreturn false",
+"function containsDuplicate(nums) {\n  const seen = new Set();\n  for (const n of nums) {\n    if (seen.has(n)) return true;\n    seen.add(n);\n  }\n  return false;\n}",
 "Альтернатива: sorted + соседи (O(n log n), O(1)) — но читается хуже.",
-["hash set"]);
+[
+ "hash set"]);
 
 add("Array","Product of Array Except Self","M",
+"Вернуть массив, где каждый элемент — произведение всех остальных без деления.",
 "Два прохода: prefix слева × suffix справа. Без деления — нет проблем с нулями.",
 "Prefix / Suffix products","O(n)","O(1) extra",
-["res[i] = 1 для всех i",
+[
+ "res[i] = 1 для всех i",
  "Left pass: res[i] = res[i-1] * nums[i-1]",
  "Right pass: running suffix; res[i] *= suf; suf *= nums[i]",
  "Return res"],
-"res = [1] * len(nums)\nfor i in range(1, len(nums)):\n    res[i] = res[i-1] * nums[i-1]\nsuf = 1\nfor i in range(len(nums)-1, -1, -1):\n    res[i] *= suf\n    suf *= nums[i]\nreturn res",
+"res[i] = 1 для всех i\nLeft pass: res[i] = res[i-1] * nums[i-1]\nRight pass: running suffix; res[i] *= suf; suf *= nums[i]\nreturn res",
+"function productExceptSelf(nums) {\n  const res = new Array(nums.length).fill(1);\n  for (let i = 1; i < nums.length; i++)\n    res[i] = res[i - 1] * nums[i - 1];\n  let suf = 1;\n  for (let i = nums.length - 1; i >= 0; i--) {\n    res[i] *= suf;\n    suf *= nums[i];\n  }\n  return res;\n}",
 "Не используй деление — если есть 0, всё ломается.",
-["prefix","suffix"]);
+[
+ "prefix",
+ "suffix"]);
 
 add("Array","Maximum Subarray","M",
+"Найти подмассив с максимальной суммой элементов.",
 "Kadane's: на каждом шаге — продолжать текущий subarray или начать новый с num.",
 "Kadane's Algorithm","O(n)","O(1)",
-["curr = max_sum = nums[0]",
+[
+ "curr = max_sum = nums[0]",
  "Для каждого num с index 1:",
  "  curr = max(num, curr + num)",
  "  max_sum = max(max_sum, curr)"],
-"curr = res = nums[0]\nfor n in nums[1:]:\n    curr = max(n, curr + n)\n    res = max(res, curr)\nreturn res",
+"curr = max_sum = nums[0]\n// Для каждого num с index 1:\ncurr = Math.max(num, curr + num)\nmax_sum = Math.max(max_sum, curr)",
+"function maxSubArray(nums) {\n  let curr = nums[0], res = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    curr = Math.max(nums[i], curr + nums[i]);\n    res = Math.max(res, curr);\n  }\n  return res;\n}",
 "Начинай с nums[0], не 0 — all-negative массив даст неверный ответ.",
-["kadane","dp"]);
+[
+ "kadane",
+ "dp"]);
 
 add("Array","Maximum Product Subarray","M",
+"Найти подмассив с максимальным произведением элементов.",
 "Трекай и max и min — отрицательное × отрицательное = положительное.",
 "DP with min/max tracking","O(n)","O(1)",
-["cur_max = cur_min = res = nums[0]",
+[
+ "cur_max = cur_min = res = nums[0]",
  "Для каждого num: cands = (num, cur_max*num, cur_min*num)",
  "cur_max = max(cands), cur_min = min(cands)",
  "res = max(res, cur_max)"],
-"cur_max = cur_min = res = nums[0]\nfor n in nums[1:]:\n    cands = (n, cur_max*n, cur_min*n)\n    cur_max, cur_min = max(cands), min(cands)\n    res = max(res, cur_max)\nreturn res",
+"cur_max = cur_min = res = nums[0]\n// Для каждого num: cands = (num, cur_max*num, cur_min*num)\ncur_max = Math.max(cands), cur_min = Math.min(cands)\nres = Math.max(res, cur_max)",
+"function maxProduct(nums) {\n  let curMax = nums[0], curMin = nums[0], res = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    const n = nums[i];\n    const cands = [n, curMax * n, curMin * n];\n    curMax = Math.max(...cands);\n    curMin = Math.min(...cands);\n    res = Math.max(res, curMax);\n  }\n  return res;\n}",
 "Используй старые cur_max/cur_min — вычисляй cur_min до обновления cur_max.",
-["dp","negative numbers"]);
+[
+ "dp",
+ "negative numbers"]);
 
 add("Array","Find Minimum in Rotated Sorted Array","M",
+"Найти минимальный элемент в ротированном отсортированном массиве.",
 "Binary search: nums[mid] > nums[hi] → минимум справа, иначе слева (включая mid).",
 "Binary Search on rotated array","O(log n)","O(1)",
-["lo=0, hi=n-1",
+[
+ "lo=0, hi=n-1",
  "mid = (lo+hi)//2",
  "Если nums[mid] > nums[hi] → lo = mid+1",
  "Иначе hi = mid",
  "Return nums[lo]"],
-"lo, hi = 0, len(nums)-1\nwhile lo < hi:\n    mid = (lo+hi)//2\n    if nums[mid] > nums[hi]:\n        lo = mid + 1\n    else:\n        hi = mid\nreturn nums[lo]",
+"let lo = 0, hi = n - 1\nconst mid = (lo + hi) >> 1\nif (nums[mid] > nums[hi]) lo = mid + 1\nelse hi = mid\nreturn nums[lo]",
+"function findMin(nums) {\n  let lo = 0, hi = nums.length - 1;\n  while (lo < hi) {\n    const mid = (lo + hi) >> 1;\n    if (nums[mid] > nums[hi]) lo = mid + 1;\n    else hi = mid;\n  }\n  return nums[lo];\n}",
 "Сравнивай с nums[hi], не nums[lo] — иначе не-ротированный массив сломает логику.",
-["binary search","rotated"]);
+[
+ "binary search",
+ "rotated"]);
 
 add("Array","Search in Rotated Sorted Array","M",
+"Найти target в ротированном отсортированном массиве или вернуть -1.",
 "Binary search: определяй какая половина отсортирована, проверяй попадает ли target туда.",
 "Binary Search with rotation awareness","O(log n)","O(1)",
-["lo, hi, mid как обычно",
+[
+ "lo, hi, mid как обычно",
  "Если левая [lo..mid] отсортирована (nums[lo] <= nums[mid]):",
  "  target в [nums[lo], nums[mid]) → hi=mid-1, иначе lo=mid+1",
  "Иначе правая отсортирована:",
  "  target в (nums[mid], nums[hi]] → lo=mid+1, иначе hi=mid-1"],
-"lo, hi = 0, len(nums)-1\nwhile lo <= hi:\n    mid = (lo+hi)//2\n    if nums[mid] == target: return mid\n    if nums[lo] <= nums[mid]:  # left sorted\n        if nums[lo] <= target < nums[mid]: hi = mid-1\n        else: lo = mid+1\n    else:  # right sorted\n        if nums[mid] < target <= nums[hi]: lo = mid+1\n        else: hi = mid-1\nreturn -1",
+"// lo, hi, mid как обычно\n// Если левая [lo..mid] отсортирована (nums[lo] <= nums[mid]):\ntarget в [nums[lo], nums[mid]) -> hi=mid-1, иначе lo=mid+1\n// Иначе правая отсортирована:\ntarget в (nums[mid], nums[hi]] -> lo=mid+1, иначе hi=mid-1",
+"function search(nums, target) {\n  let lo = 0, hi = nums.length - 1;\n  while (lo <= hi) {\n    const mid = (lo + hi) >> 1;\n    if (nums[mid] === target) return mid;\n    if (nums[lo] <= nums[mid]) {\n      if (nums[lo] <= target && target < nums[mid]) hi = mid - 1;\n      else lo = mid + 1;\n    } else {\n      if (nums[mid] < target && target <= nums[hi]) lo = mid + 1;\n      else hi = mid - 1;\n    }\n  }\n  return -1;\n}",
 "<= при проверке отсортированности важен — lo==mid означает одиночный элемент.",
-["binary search","rotated"]);
+[
+ "binary search",
+ "rotated"]);
 
 add("Array","3 Sum","M",
+"Найти все уникальные тройки чисел с суммой ноль.",
 "Sort + two pointers: фиксируй i, двигай l/r навстречу, скипай дубли.",
 "Sort + Two Pointers","O(n^2)","O(n) output",
-["Сортируй nums",
+[
+ "Сортируй nums",
  "Для каждого i: nums[i]>0 → break; дубль → skip",
  "l=i+1, r=n-1: ищи пару с суммой -nums[i]",
  "При нахождении: скипай дубли l и r, двигай оба"],
-"nums.sort(); res = []\nfor i, n in enumerate(nums):\n    if n > 0: break\n    if i > 0 and n == nums[i-1]: continue\n    l, r = i+1, len(nums)-1\n    while l < r:\n        s = n + nums[l] + nums[r]\n        if s < 0: l += 1\n        elif s > 0: r -= 1\n        else:\n            res.append([n,nums[l],nums[r]])\n            l += 1\n            while l < r and nums[l] == nums[l-1]: l += 1\nreturn res",
+"nums.sort((a, b) => a - b)\n// Для каждого i: nums[i]>0 -> break; дубль -> skip\nl=i+1, r=n-1: ищи пару с суммой -nums[i]\n// При нахождении: скипай дубли l и r, двигай оба",
+"function threeSum(nums) {\n  nums.sort((a, b) => a - b);\n  const res = [];\n  for (let i = 0; i < nums.length; i++) {\n    if (nums[i] > 0) break;\n    if (i > 0 && nums[i] === nums[i - 1]) continue;\n    let l = i + 1, r = nums.length - 1;\n    while (l < r) {\n      const s = nums[i] + nums[l] + nums[r];\n      if (s < 0) l++;\n      else if (s > 0) r--;\n      else {\n        res.push([nums[i], nums[l], nums[r]]);\n        l++;\n        while (l < r && nums[l] === nums[l - 1]) l++;\n      }\n    }\n  }\n  return res;\n}",
 "Двойной skip дублей: при переборе i И после нахождения триплета.",
-["two pointers","sort","dedup"]);
+[
+ "two pointers",
+ "sort",
+ "dedup"]);
 
 add("Array","Container With Most Water","M",
+"Найти две линии, образующие контейнер с максимальной площадью воды.",
 "Two pointers с краёв: двигай указатель с меньшей высотой — только так можно улучшить площадь.",
 "Greedy Two Pointers","O(n)","O(1)",
-["l=0, r=n-1",
+[
+ "l=0, r=n-1",
  "area = min(h[l], h[r]) * (r-l)",
  "Обнови max",
  "Если h[l] < h[r] → l++, иначе r--"],
-"l, r = 0, len(height)-1\nres = 0\nwhile l < r:\n    res = max(res, min(height[l],height[r]) * (r-l))\n    if height[l] < height[r]: l += 1\n    else: r -= 1\nreturn res",
+"let l = 0, r = n - 1\narea = Math.min(h[l], h[r]) * (r-l)\nres = Math.max(res, area)\nif (height[l] < height[r]) l++; else r--",
+"function maxArea(height) {\n  let l = 0, r = height.length - 1, res = 0;\n  while (l < r) {\n    res = Math.max(res, Math.min(height[l], height[r]) * (r - l));\n    if (height[l] < height[r]) l++;\n    else r--;\n  }\n  return res;\n}",
 "Почему меньший? Ширина уменьшается в любом случае — единственный шанс улучшить = поднять высоту.",
-["two pointers","greedy"]);
+[
+ "two pointers",
+ "greedy"]);
 
-// BINARY
 add("Binary","Sum of Two Integers","M",
+"Сложить два целых числа без использования операторов + и -.",
 "XOR = сумма без carry. AND<<1 = carry. Повторяй пока carry != 0.",
 "Bit manipulation — carry simulation","O(1)","O(1)",
-["Пока b != 0:",
+[
+ "Пока b != 0:",
  "  carry = (a & b) << 1",
  "  a = a ^ b",
  "  b = carry",
  "Return a"],
-"def getSum(a, b):\n    mask = 0xFFFFFFFF\n    while b & mask:\n        carry = (a & b) << 1\n        a = a ^ b\n        b = carry\n    return a if b == 0 else a & mask",
+"while (b) {\ncarry = (a & b) << 1\na = a ^ b\nb = carry\nreturn a",
+"function getSum(a, b) {\n  const mask = 0xFFFFFFFF;\n  while (b & mask) {\n    const carry = (a & b) << 1;\n    a = a ^ b;\n    b = carry;\n  }\n  return a >>> 0 === 0 ? a : a & mask;\n}",
 "Python int неограничен — нужна маска 0xFFFFFFFF для 32-bit эмуляции.",
-["bit manipulation","XOR"]);
+[
+ "bit manipulation",
+ "XOR"]);
 
 add("Binary","Number of 1 Bits","E",
+"Подсчитать количество единичных битов в беззнаковом 32-битном числе.",
 "Трюк: n & (n-1) убирает правый единичный бит. Считай итерации до n=0.",
 "Bit trick: n & (n-1)","O(k) k=кол-во бит","O(1)",
-["count = 0",
+[
+ "count = 0",
  "Пока n != 0: count++, n = n & (n-1)",
  "Return count"],
-"def hammingWeight(n):\n    count = 0\n    while n:\n        n &= n - 1\n        count += 1\n    return count",
+"let count = 0\nwhile (n) { n &= n - 1; count++ }\nreturn count",
+"function hammingWeight(n) {\n  let count = 0;\n  while (n) {\n    n &= n - 1;\n    count++;\n  }\n  return count;\n}",
 "n&(n-1) убирает ровно один единичный бит (самый правый).",
-["bit manipulation"]);
+[
+ "bit manipulation"]);
 
 add("Binary","Counting Bits","E",
+"Для каждого числа от 0 до n вернуть количество единичных битов.",
 "dp[i] = dp[i >> 1] + (i & 1). Сдвиг вправо убирает последний бит.",
 "DP with bit shift","O(n)","O(n)",
-["dp = [0] * (n+1)",
+[
+ "dp = [0] * (n+1)",
  "Для i от 1 до n:",
  "  dp[i] = dp[i >> 1] + (i & 1)",
  "Return dp"],
-"dp = [0] * (n+1)\nfor i in range(1, n+1):\n    dp[i] = dp[i >> 1] + (i & 1)\nreturn dp",
+"const dp = new Array(n + 1).fill(0)\nfor (let i = 1; i <= n; i++)\ndp[i] = dp[i >> 1] + (i & 1)\nreturn dp",
+"function countBits(n) {\n  const dp = new Array(n + 1).fill(0);\n  for (let i = 1; i <= n; i++)\n    dp[i] = dp[i >> 1] + (i & 1);\n  return dp;\n}",
 "i>>1 = i//2 (убирает последний бит). (i&1) = 0 если чётное, 1 если нечётное.",
-["dp","bit manipulation"]);
+[
+ "dp",
+ "bit manipulation"]);
 
 add("Binary","Missing Number","E",
+"Найти пропущенное число в массиве, содержащем n различных чисел от 0 до n.",
 "Gauss: expected = n*(n+1)/2. Missing = expected - sum(nums). Или XOR всех индексов и значений.",
 "Math (Gauss) или XOR","O(n)","O(1)",
-["Math: return n*(n+1)//2 - sum(nums)",
+[
+ "Math: return n*(n+1)//2 - sum(nums)",
  "XOR: xor = 0",
  "for i,v in enumerate(nums): xor ^= i ^ v",
  "return xor ^ len(nums)"],
-"# Math\nreturn n*(n+1)//2 - sum(nums)\n\n# XOR\nxor = 0\nfor i, v in enumerate(nums):\n    xor ^= i ^ v\nreturn xor ^ len(nums)",
+"return n * (n + 1) / 2 - sum(nums)\nlet xor = 0\nfor (let i = 0; i < nums.length; i++) xor ^= i ^ nums[i]\nreturn xor ^ nums.length",
+"function missingNumber(nums) {\n  let xor = 0;\n  for (let i = 0; i < nums.length; i++) xor ^= i ^ nums[i];\n  return xor ^ nums.length;\n}",
 "Gauss проще. XOR работает без переполнения и элегантнее.",
-["math","XOR"]);
+[
+ "math",
+ "XOR"]);
 
 add("Binary","Reverse Bits","E",
+"Развернуть биты 32-битного беззнакового целого числа.",
 "32 итерации: берём правый бит n, сдвигаем result влево, OR-им бит.",
 "Bit-by-bit reverse","O(32)=O(1)","O(1)",
-["res = 0",
+[
+ "res = 0",
  "Для i от 0 до 31:",
  "  res = (res << 1) | (n & 1)",
  "  n >>= 1",
  "Return res & 0xFFFFFFFF"],
-"def reverseBits(n):\n    res = 0\n    for _ in range(32):\n        res = (res << 1) | (n & 1)\n        n >>= 1\n    return res",
+"res = 0\n// Для i от 0 до 31:\nres = (res << 1) | (n & 1)\nn >>= 1\nReturn res & 0xFFFFFFFF",
+"function reverseBits(n) {\n  let res = 0;\n  for (let i = 0; i < 32; i++) {\n    res = (res << 1) | (n & 1);\n    n >>>= 1;\n  }\n  return res >>> 0;\n}",
 "В Python нужно & 0xFFFFFFFF в конце из-за знакового расширения.",
-["bit manipulation"]);
+[
+ "bit manipulation"]);
 
-// DYNAMIC PROGRAMMING
 add("Dynamic Programming","Climbing Stairs","E",
+"Посчитать количество способов подняться на n ступенек (1 или 2 за шаг).",
 "Fibonacci: способов до n = способов с n-1 + способов с n-2.",
 "Fibonacci / Bottom-up DP","O(n)","O(1)",
-["Если n<=2: return n",
+[
+ "Если n<=2: return n",
  "a=1, b=2",
  "Для i от 3 до n: a, b = b, a+b",
  "Return b"],
-"if n <= 2: return n\na, b = 1, 2\nfor _ in range(3, n+1):\n    a, b = b, a+b\nreturn b",
+"// Если n<=2: return n\na=1, b=2\n// Для i от 3 до n: a, b = b, a+b\nreturn b",
+"function climbStairs(n) {\n  if (n <= 2) return n;\n  let a = 1, b = 2;\n  for (let i = 3; i <= n; i++) [a, b] = [b, a + b];\n  return b;\n}",
 "Base cases: n=1→1, n=2→2. Не начинай оба с 0.",
-["dp","fibonacci"]);
+[
+ "dp",
+ "fibonacci"]);
 
 add("Dynamic Programming","Coin Change","M",
+"Найти минимальное число монет для суммы amount или вернуть -1.",
 "dp[i] = мин. монет для суммы i. dp[0]=0, пробуй каждую монету для каждой суммы.",
 "Unbounded Knapsack DP","O(amount x coins)","O(amount)",
-["dp = [inf]*(amount+1), dp[0]=0",
+[
+ "dp = [inf]*(amount+1), dp[0]=0",
  "Для i от 1 до amount:",
  "  Для каждой монеты c <= i:",
  "    dp[i] = min(dp[i], dp[i-c]+1)",
  "Return dp[amount] или -1"],
-"dp = [float('inf')] * (amount+1)\ndp[0] = 0\nfor i in range(1, amount+1):\n    for c in coins:\n        if c <= i:\n            dp[i] = min(dp[i], dp[i-c]+1)\nreturn dp[amount] if dp[amount] != float('inf') else -1",
+"dp = [Infinity]*(amount+1), dp[0]=0\n// Для i от 1 до amount:\nДля каждой монеты c <= i:\ndp[i] = Math.min(dp[i], dp[i-c]+1)\nreturn dp[amount] === Infinity ? -1 : dp[amount]",
+"function coinChange(coins, amount) {\n  const dp = new Array(amount + 1).fill(Infinity);\n  dp[0] = 0;\n  for (let i = 1; i <= amount; i++) {\n    for (const c of coins) {\n      if (c <= i) dp[i] = Math.min(dp[i], dp[i - c] + 1);\n    }\n  }\n  return dp[amount] === Infinity ? -1 : dp[amount];\n}",
 "Инициализируй inf, не 0 — min(inf, ...) даст правильный результат.",
-["dp"]);
+[
+ "dp"]);
 
 add("Dynamic Programming","Longest Increasing Subsequence","M",
+"Найти длину самой длинной строго возрастающей подпоследовательности.",
 "O(n log n): patience sort с binary search на tails[]. tails[pos] = замена.",
 "DP или Binary Search (patience sort)","O(n log n)","O(n)",
-["tails = []",
+[
+ "tails = []",
  "Для каждого num: pos = bisect_left(tails, num)",
  "Если pos == len(tails) → append",
  "Иначе tails[pos] = num",
  "Return len(tails)"],
-"from bisect import bisect_left\ntails = []\nfor n in nums:\n    pos = bisect_left(tails, n)\n    if pos == len(tails):\n        tails.append(n)\n    else:\n        tails[pos] = n\nreturn len(tails)",
+"tails = []\n// Для каждого num: pos = bisect_left(tails, num)\n// Если pos == tails.length -> append\n// Иначе tails[pos] = num\nreturn tails.length",
+"function lengthOfLIS(nums) {\n  const tails = [];\n  for (const n of nums) {\n    let lo = 0, hi = tails.length;\n    while (lo < hi) {\n      const mid = (lo + hi) >> 1;\n      if (tails[mid] < n) lo = mid + 1;\n      else hi = mid;\n    }\n    if (lo === tails.length) tails.push(n);\n    else tails[lo] = n;\n  }\n  return tails.length;\n}",
 "tails[] — это НЕ сам LIS, только рабочий массив. Его длина = длина LIS.",
-["dp","binary search"]);
+[
+ "dp",
+ "binary search"]);
 
 add("Dynamic Programming","Longest Common Subsequence","M",
+"Найти длину наибольшей общей подпоследовательности двух строк.",
 "2D DP: dp[i][j] = LCS для s1[:i] и s2[:j]. Совпадение +1, иначе max соседей.",
 "2D DP","O(mxn)","O(mxn)",
-["dp[m+1][n+1] = 0",
+[
+ "dp[m+1][n+1] = 0",
  "Для i,j: если s1[i-1]==s2[j-1]: dp[i][j]=dp[i-1][j-1]+1",
  "Иначе: dp[i][j]=max(dp[i-1][j], dp[i][j-1])",
  "Return dp[m][n]"],
-"m, n = len(t1), len(t2)\ndp = [[0]*(n+1) for _ in range(m+1)]\nfor i in range(1,m+1):\n    for j in range(1,n+1):\n        if t1[i-1]==t2[j-1]: dp[i][j]=dp[i-1][j-1]+1\n        else: dp[i][j]=max(dp[i-1][j],dp[i][j-1])\nreturn dp[m][n]",
+"dp[m+1][n+1] = 0\n// Для i,j: если s1[i-1]==s2[j-1]: dp[i][j]=dp[i-1][j-1]+1\n// Иначе: dp[i][j]=Math.max(dp[i-1][j], dp[i][j-1])\nreturn dp[m][n]",
+"function longestCommonSubsequence(text1, text2) {\n  const m = text1.length, n = text2.length;\n  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));\n  for (let i = 1; i <= m; i++) {\n    for (let j = 1; j <= n; j++) {\n      if (text1[i - 1] === text2[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;\n      else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n    }\n  }\n  return dp[m][n];\n}",
 "Subsequence != substring: буквы не обязаны идти подряд.",
-["dp","2D","string"]);
+[
+ "dp",
+ "2D",
+ "string"]);
 
 add("Dynamic Programming","Word Break Problem","M",
+"Определить, можно ли разбить строку на слова из словаря.",
 "dp[i] = True если s[:i] разбивается по словарю. Проверяй все split-позиции j.",
 "1D DP","O(n^2 x m)","O(n)",
-["word_set = set(wordDict)",
+[
+ "word_set = set(wordDict)",
  "dp = [False]*(n+1), dp[0]=True",
  "Для i от 1..n: для j от 0..i:",
  "  Если dp[j] и s[j:i] в word_set: dp[i]=True",
  "Return dp[n]"],
-"word_set = set(wordDict)\ndp = [False] * (len(s)+1)\ndp[0] = True\nfor i in range(1, len(s)+1):\n    for j in range(i):\n        if dp[j] and s[j:i] in word_set:\n            dp[i] = True\n            break\nreturn dp[-1]",
+"word_set = set(wordDict)\ndp = [false]*(n+1), dp[0]=true\n// Для i от 1..n: для j от 0..i:\nЕсли dp[j] и s[j:i] в word_set: dp[i]=true\nreturn dp[n]",
+"function wordBreak(s, wordDict) {\n  const wordSet = new Set(wordDict);\n  const dp = new Array(s.length + 1).fill(false);\n  dp[0] = true;\n  for (let i = 1; i <= s.length; i++) {\n    for (let j = 0; j < i; j++) {\n      if (dp[j] && wordSet.has(s.slice(j, i))) {\n        dp[i] = true;\n        break;\n      }\n    }\n  }\n  return dp[s.length];\n}",
 "Слова могут перекрываться — перебирай все j, не первое совпадение.",
-["dp","hash set"]);
+[
+ "dp",
+ "hash set"]);
 
 add("Dynamic Programming","Combination Sum","M",
+"Найти все уникальные комбинации кандидатов с суммой target (элементы можно повторять).",
 "Backtracking: добавляй кандидат, уменьшай remain, при 0 — сохрани. Элементы повторяемы.",
 "Backtracking","O(n^(t/min))","O(t/min) стек",
-["Сортируй candidates",
+[
+ "Сортируй candidates",
  "dfs(start, path, remain):",
  "  remain==0 → append copy",
  "  candidates[i] > remain → break",
  "  Добавь, рекурси с i (не i+1!), pop"],
-"res = []\ndef dfs(start, path, remain):\n    if remain == 0: res.append(path[:]); return\n    for i in range(start, len(candidates)):\n        if candidates[i] > remain: break\n        path.append(candidates[i])\n        dfs(i, path, remain - candidates[i])\n        path.pop()\ncandidates.sort()\ndfs(0, [], target)\nreturn res",
+"candidates.sort((a, b) => a - b)\n// dfs(start, path, remain):\nremain==0 -> append copy\ncandidates[i] > remain -> break\nДобавь, рекурси с i (не i+1!), pop",
+"function combinationSum(candidates, target) {\n  candidates.sort((a, b) => a - b);\n  const res = [];\n  function dfs(start, path, remain) {\n    if (remain === 0) { res.push([...path]); return; }\n    for (let i = start; i < candidates.length; i++) {\n      if (candidates[i] > remain) break;\n      path.push(candidates[i]);\n      dfs(i, path, remain - candidates[i]);\n      path.pop();\n    }\n  }\n  dfs(0, [], target);\n  return res;\n}",
 "Передавай i, не i+1 — элементы можно использовать повторно.",
-["backtracking"]);
+[
+ "backtracking"]);
 
 add("Dynamic Programming","House Robber","M",
+"Максимизировать сумму ограбленных домов без ограбления двух соседних.",
 "dp[i] = max(взять i + dp[i-2], пропустить + dp[i-1]). Только две переменные.",
 "1D DP rolling variables","O(n)","O(1)",
-["a=0, b=0 (dp[i-2], dp[i-1])",
+[
+ "a=0, b=0 (dp[i-2], dp[i-1])",
  "Для каждого num:",
  "  a, b = b, max(b, a+num)",
  "Return b"],
-"a, b = 0, 0\nfor n in nums:\n    a, b = b, max(b, a+n)\nreturn b",
+"let a = 0, b = 0\nfor (const num of nums)\na, b = b, Math.max(b, a+num)\nreturn b",
+"function rob(nums) {\n  let a = 0, b = 0;\n  for (const n of nums) [a, b] = [b, Math.max(b, a + n)];\n  return b;\n}",
 "Нет запрета брать 3 подряд — просто математически невыгодно.",
-["dp"]);
+[
+ "dp"]);
 
 add("Dynamic Programming","House Robber II","M",
+"То же, но дома расположены по кругу (первый и последний соседи).",
 "Круговой = первый и последний смежны. Запусти House Robber дважды: без первого и без последнего.",
 "House Robber x2","O(n)","O(1)",
-["Если n==1: return nums[0]",
+[
+ "Если n==1: return nums[0]",
  "helper(arr) = обычный House Robber",
  "Return max(helper(nums[:-1]), helper(nums[1:]))"],
-"def rob1(nums):\n    a, b = 0, 0\n    for n in nums:\n        a, b = b, max(b, a+n)\n    return b\nif len(nums)==1: return nums[0]\nreturn max(rob1(nums[:-1]), rob1(nums[1:]))",
+"// Если n==1: return nums[0]\nhelper(arr) = обычный House Robber\nreturn Math.max(rob1(nums.slice(0,-1)), rob1(nums.slice(1)))",
+"function rob(nums) {\n  function rob1(arr) {\n    let a = 0, b = 0;\n    for (const n of arr) [a, b] = [b, Math.max(b, a + n)];\n    return b;\n  }\n  if (nums.length === 1) return nums[0];\n  return Math.max(rob1(nums.slice(0, -1)), rob1(nums.slice(1)));\n}",
 "Edge case n==1 — без него оба подмассива пустые.",
-["dp","circular"]);
+[
+ "dp",
+ "circular"]);
 
 add("Dynamic Programming","Decode Ways","M",
+"Посчитать количество способов декодировать строку из цифр (A=1..Z=26).",
 "dp[i] = способов декодировать s[:i]. Однозначный вариант + двузначный вариант.",
 "1D DP","O(n)","O(1)",
-["dp[0]=1, dp[1]=(1 если s[0]!='0' else 0)",
+[
+ "dp[0]=1, dp[1]=(1 если s[0]!='0' else 0)",
  "Для i от 2..n:",
  "  s[i-1]!='0' → dp[i] += dp[i-1]",
  "  10<=int(s[i-2:i])<=26 → dp[i] += dp[i-2]",
  "Return dp[n]"],
-"if not s or s[0]=='0': return 0\ndp = [0]*(len(s)+1)\ndp[0], dp[1] = 1, 1\nfor i in range(2, len(s)+1):\n    if s[i-1] != '0':\n        dp[i] += dp[i-1]\n    two = int(s[i-2:i])\n    if 10 <= two <= 26:\n        dp[i] += dp[i-2]\nreturn dp[-1]",
+"dp[0]=1, dp[1]=(1 если s[0]!='0' else 0)\n// Для i от 2..n:\ns[i-1]!='0' -> dp[i] += dp[i-1]\n10<=int(s[i-2:i])<=26 -> dp[i] += dp[i-2]\nreturn dp[n]",
+"function numDecodings(s) {\n  if (!s || s[0] === '0') return 0;\n  const dp = new Array(s.length + 1).fill(0);\n  dp[0] = 1; dp[1] = 1;\n  for (let i = 2; i <= s.length; i++) {\n    if (s[i - 1] !== '0') dp[i] += dp[i - 1];\n    const two = parseInt(s.slice(i - 2, i), 10);\n    if (two >= 10 && two <= 26) dp[i] += dp[i - 2];\n  }\n  return dp[s.length];\n}",
 "'0' сам по себе не декодируется. '30', '40' — тоже нельзя. Только 10 и 20.",
-["dp","string"]);
+[
+ "dp",
+ "string"]);
 
 add("Dynamic Programming","Unique Paths","M",
+"Посчитать число уникальных путей из левого верхнего в правый нижний угол сетки.",
 "dp[i][j] = сверху + слева. Оптимизируй до 1D: dp[j] += dp[j-1].",
 "2D DP или комбинаторика","O(mxn)","O(n)",
-["dp = [1]*n",
+[
+ "dp = [1]*n",
  "Для каждой строки i от 1..m:",
  "  Для j от 1..n: dp[j] += dp[j-1]",
  "Return dp[-1]"],
-"dp = [1] * n\nfor i in range(1, m):\n    for j in range(1, n):\n        dp[j] += dp[j-1]\nreturn dp[-1]\n\n# Math O(1)\nfrom math import comb\nreturn comb(m+n-2, m-1)",
+"dp = [1]*n\n// Для каждой строки i от 1..m:\nДля j от 1..n: dp[j] += dp[j-1]\nReturn dp[-1]",
+"function uniquePaths(m, n) {\n  const dp = new Array(n).fill(1);\n  for (let i = 1; i < m; i++) {\n    for (let j = 1; j < n; j++) dp[j] += dp[j - 1];\n  }\n  return dp[n - 1];\n}",
 "Math-версия C(m+n-2, m-1) самая быстрая — но надо знать формулу.",
-["dp","math","grid"]);
+[
+ "dp",
+ "math",
+ "grid"]);
 
 add("Dynamic Programming","Jump Game","M",
+"Определить, можно ли дойти до последнего индекса, прыгая на nums[i] шагов.",
 "Greedy: трекай max_reach. Если i > max_reach — до этой позиции не добраться.",
 "Greedy","O(n)","O(1)",
-["reach = 0",
+[
+ "reach = 0",
  "Для i, num в enumerate(nums):",
  "  Если i > reach → return False",
  "  reach = max(reach, i+num)",
  "Return True"],
-"reach = 0\nfor i, n in enumerate(nums):\n    if i > reach: return False\n    reach = max(reach, i+n)\nreturn True",
+"let reach = 0\n// Для i, num в nums:\nif (i > reach) return false\nreach = Math.max(reach, i+num)\nreturn true",
+"function canJump(nums) {\n  let reach = 0;\n  for (let i = 0; i < nums.length; i++) {\n    if (i > reach) return false;\n    reach = Math.max(reach, i + nums[i]);\n  }\n  return true;\n}",
 "Не нужен BFS/DP — достаточно жадно трекать максимальную достижимую позицию.",
-["greedy"]);
+[
+ "greedy"]);
 
-// GRAPH
 add("Graph","Clone Graph","M",
+"Создать глубокую копию неориентированного связного графа.",
 "DFS + HashMap: old_node → clone. Без него — бесконечный цикл в графах с циклами.",
 "DFS + HashMap","O(V+E)","O(V+E)",
-["visited = {} (old → clone)",
+[
+ "visited = {} (old → clone)",
  "dfs(node): если в visited → return visited[node]",
  "clone = Node(node.val); visited[node] = clone",
  "Для каждого соседа: clone.neighbors.append(dfs(nb))",
  "Return clone"],
-"def cloneGraph(node):\n    visited = {}\n    def dfs(n):\n        if n in visited: return visited[n]\n        clone = Node(n.val)\n        visited[n] = clone\n        for nb in n.neighbors:\n            clone.neighbors.append(dfs(nb))\n        return clone\n    return dfs(node) if node else None",
+"visited = {} (old -> clone)\ndfs(node): если в visited -> return visited[node]\nclone = Node(node.val); visited[node] = clone\n// Для каждого соседа: clone.neighbors.append(dfs(nb))\n// Return clone",
+"function cloneGraph(node) {\n  if (!node) return null;\n  const visited = new Map();\n  function dfs(n) {\n    if (visited.has(n)) return visited.get(n);\n    const clone = new Node(n.val);\n    visited.set(n, clone);\n    for (const nb of n.neighbors) clone.neighbors.push(dfs(nb));\n    return clone;\n  }\n  return dfs(node);\n}",
 "visited[node] = clone ДО рекурсии — иначе циклы вызовут бесконечную рекурсию.",
-["dfs","hash map","recursion"]);
+[
+ "dfs",
+ "hash map",
+ "recursion"]);
 
 add("Graph","Course Schedule","M",
+"Определить, можно ли пройти все курсы при заданных пререквизитах.",
 "Cycle detection в DAG. Kahn's BFS (in-degrees) или DFS с 3 состояниями.",
 "Topological Sort / Cycle Detection","O(V+E)","O(V+E)",
-["Посчитай in-degrees всех вершин",
+[
+ "Посчитай in-degrees всех вершин",
  "Добавь в очередь все вершины с in-degree=0",
  "BFS: убирай рёбра, добавляй новые 0-in-degree",
  "Если обработано numCourses вершин → ациклический"],
-"from collections import deque, defaultdict\ngraph = defaultdict(list)\nindeg = [0]*numCourses\nfor a,b in prerequisites:\n    graph[b].append(a); indeg[a]+=1\nq = deque(i for i in range(numCourses) if indeg[i]==0)\ncount = 0\nwhile q:\n    node = q.popleft(); count += 1\n    for nb in graph[node]:\n        indeg[nb]-=1\n        if indeg[nb]==0: q.append(nb)\nreturn count == numCourses",
+"// Посчитай in-degrees всех вершин\n// Добавь в очередь все вершины с in-degree=0\nBFS: убирай рёбра, добавляй новые 0-in-degree\n// Если обработано numCourses вершин -> ациклический",
+"function canFinish(numCourses, prerequisites) {\n  const graph = Array.from({ length: numCourses }, () => []);\n  const indeg = new Array(numCourses).fill(0);\n  for (const [a, b] of prerequisites) {\n    graph[b].push(a);\n    indeg[a]++;\n  }\n  const q = [];\n  for (let i = 0; i < numCourses; i++) if (indeg[i] === 0) q.push(i);\n  let count = 0;\n  while (q.length) {\n    const node = q.shift();\n    count++;\n    for (const nb of graph[node]) {\n      if (--indeg[nb] === 0) q.push(nb);\n    }\n  }\n  return count === numCourses;\n}",
 "Если count < numCourses — есть цикл, курсы нельзя завершить.",
-["topological sort","cycle","BFS"]);
+[
+ "topological sort",
+ "cycle",
+ "BFS"]);
 
 add("Graph","Pacific Atlantic Water Flow","M",
+"Найти клетки, откуда вода может стечь и в Тихий, и в Атлантический океан.",
 "Reverse BFS от каждого океана вверх (>=). Ответ = пересечение двух множеств.",
 "Multi-source BFS (reverse flow)","O(mxn)","O(mxn)",
-["pac = верхняя строка + левый столбец",
+[
+ "pac = верхняя строка + левый столбец",
  "atl = нижняя строка + правый столбец",
  "BFS: двигайся если сосед >= текущий",
  "Return pac_visited INTERSECT atl_visited"],
-"def bfs(starts):\n    q = deque(starts); vis = set(starts)\n    while q:\n        r,c = q.popleft()\n        for dr,dc in [(0,1),(0,-1),(1,0),(-1,0)]:\n            nr,nc=r+dr,c+dc\n            if 0<=nr<R and 0<=nc<C and (nr,nc) not in vis and h[nr][nc]>=h[r][c]:\n                vis.add((nr,nc)); q.append((nr,nc))\n    return vis\nreturn list(bfs(pac) & bfs(atl))",
+"pac = верхняя строка + левый столбец\natl = нижняя строка + правый столбец\nBFS: двигайся если сосед >= текущий\n// Return pac_visited INTERSECT atl_visited",
+"function pacificAtlantic(heights) {\n  const R = heights.length, C = heights[0].length;\n  const dirs = [[0,1],[0,-1],[1,0],[-1,0]];\n  function bfs(starts) {\n    const q = [...starts], vis = new Set(starts.map(([r,c]) => r+','+c));\n    while (q.length) {\n      const [r, c] = q.shift();\n      for (const [dr, dc] of dirs) {\n        const nr = r + dr, nc = c + dc;\n        const key = nr + ',' + nc;\n        if (nr >= 0 && nr < R && nc >= 0 && nc < C && !vis.has(key) && heights[nr][nc] >= heights[r][c]) {\n          vis.add(key);\n          q.push([nr, nc]);\n        }\n      }\n    }\n    return vis;\n  }\n  const pac = [], atl = [];\n  for (let c = 0; c < C; c++) { pac.push([0,c]); atl.push([R-1,c]); }\n  for (let r = 0; r < R; r++) { pac.push([r,0]); atl.push([r,C-1]); }\n  const pacVis = bfs(pac), atlVis = bfs(atl);\n  const res = [];\n  for (let r = 0; r < R; r++)\n    for (let c = 0; c < C; c++)\n      if (pacVis.has(r+','+c) && atlVis.has(r+','+c)) res.push([r, c]);\n  return res;\n}",
 "Reverse thinking: не куда вода стекает, а откуда она может подняться к океану.",
-["BFS","multi-source","reverse"]);
+[
+ "BFS",
+ "multi-source",
+ "reverse"]);
 
 add("Graph","Number of Islands","M",
+"Подсчитать количество островов (связных областей из 1) в сетке.",
 "DFS flood fill: '1' → count++, затопи весь остров (меняй на '0').",
 "DFS Flood Fill","O(mxn)","O(mxn) стек",
-["Для каждой (i,j):",
+[
+ "Для каждой (i,j):",
  "  Если grid[i][j]=='1': count++, dfs(i,j)",
  "  dfs: меняй на '0', рекурси в 4 стороны",
  "Return count"],
-"def dfs(r, c):\n    if r<0 or r>=R or c<0 or c>=C or grid[r][c]!='1': return\n    grid[r][c]='0'\n    dfs(r+1,c);dfs(r-1,c);dfs(r,c+1);dfs(r,c-1)\ncount=0\nfor r in range(R):\n    for c in range(C):\n        if grid[r][c]=='1':\n            count+=1; dfs(r,c)\nreturn count",
+"// Для каждой (i,j):\nЕсли grid[i][j]=='1': count++, dfs(i,j)\ndfs: меняй на '0', рекурси в 4 стороны\nreturn count",
+"function numIslands(grid) {\n  const R = grid.length, C = grid[0].length;\n  function dfs(r, c) {\n    if (r < 0 || r >= R || c < 0 || c >= C || grid[r][c] !== '1') return;\n    grid[r][c] = '0';\n    dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1);\n  }\n  let count = 0;\n  for (let r = 0; r < R; r++)\n    for (let c = 0; c < C; c++)\n      if (grid[r][c] === '1') { count++; dfs(r, c); }\n  return count;\n}",
 "Изменение матрицы — side effect. Если нельзя менять: используй visited set.",
-["dfs","flood fill","matrix"]);
+[
+ "dfs",
+ "flood fill",
+ "matrix"]);
 
 add("Graph","Longest Consecutive Sequence","M",
+"Найти длину самой длинной последовательности последовательных чисел.",
 "HashSet: запускай отсчёт ТОЛЬКО если num-1 нет в set (начало цепочки).",
 "HashSet O(n)","O(n)","O(n)",
-["num_set = set(nums)",
+[
+ "num_set = set(nums)",
  "Для каждого num:",
  "  Если num-1 в set → skip",
  "  Иначе: streak=1, cur=num+1 пока в set",
  "  longest = max(longest, streak)"],
-"num_set = set(nums)\nlongest = 0\nfor n in num_set:\n    if n-1 not in num_set:\n        cur, streak = n, 1\n        while cur+1 in num_set:\n            cur+=1; streak+=1\n        longest = max(longest, streak)\nreturn longest",
+"num_set = set(nums)\nfor (const num of nums)\nЕсли num-1 в set -> skip\nИначе: streak=1, cur=num+1 пока в set\nlongest = Math.max(longest, streak)",
+"function longestConsecutive(nums) {\n  const numSet = new Set(nums);\n  let longest = 0;\n  for (const n of numSet) {\n    if (numSet.has(n - 1)) continue;\n    let cur = n, streak = 1;\n    while (numSet.has(cur + 1)) { cur++; streak++; }\n    longest = Math.max(longest, streak);\n  }\n  return longest;\n}",
 "Итерируй num_set, не nums — дубли запустят подсчёт дважды.",
-["hash set"]);
+[
+ "hash set"]);
 
 add("Graph","Alien Dictionary","H",
+"Восстановить порядок букв инопланетного алфавита по отсортированному списку слов.",
 "Топосорт на символах. Сравни соседние слова → первый различный char → ребро в графе.",
 "Topological Sort на символах","O(C) сумма длин","O(1) 26 символов",
-["adj = {c: set() для каждого символа}",
+[
+ "adj = {c: set() для каждого символа}",
  "Для пары соседних слов: найди первый различный char",
  "Если word1 является prefix word2 и длиннее → invalid",
  "Topo sort (DFS) на символах"],
-"adj = {c:set() for w in words for c in w}\nfor i in range(len(words)-1):\n    w1,w2=words[i],words[i+1]\n    m=min(len(w1),len(w2))\n    if len(w1)>len(w2) and w1[:m]==w2[:m]: return ''\n    for j in range(m):\n        if w1[j]!=w2[j]: adj[w1[j]].add(w2[j]); break\n# DFS topo sort на символах...",
+"adj = {c: set() для каждого символа}\n// Для пары соседних слов: найди первый различный char\n// Если word1 является prefix word2 и длиннее -> invalid\n// Topo sort (DFS) на символах",
+"function alienOrder(words) {\n  const adj = {};\n  for (const w of words) for (const c of w) adj[c] = adj[c] || new Set();\n  for (let i = 0; i < words.length - 1; i++) {\n    const w1 = words[i], w2 = words[i + 1];\n    const m = Math.min(w1.length, w2.length);\n    if (w1.length > w2.length && w1.slice(0, m) === w2.slice(0, m)) return '';\n    for (let j = 0; j < m; j++) {\n      if (w1[j] !== w2[j]) { adj[w1[j]].add(w2[j]); break; }\n    }\n  }\n  const indeg = {};\n  for (const c in adj) indeg[c] = 0;\n  for (const c in adj) for (const nb of adj[c]) indeg[nb] = (indeg[nb] || 0) + 1;\n  const q = Object.keys(indeg).filter(c => indeg[c] === 0);\n  const res = [];\n  while (q.length) {\n    const c = q.shift();\n    res.push(c);\n    for (const nb of adj[c]) {\n      if (--indeg[nb] === 0) q.push(nb);\n    }\n  }\n  return res.length === Object.keys(adj).length ? res.join('') : '';\n}",
 "Слово-prefix после длинного (ab после abc) = invalid. Наоборот (abc после ab) = valid.",
-["topological sort","string","graph"]);
+[
+ "topological sort",
+ "string",
+ "graph"]);
 
 add("Graph","Graph Valid Tree","M",
+"Определить, является ли граф из n узлов и рёбер валидным деревом.",
 "Дерево = связный + без циклов. n-1 рёбер + все вершины достижимы.",
 "Union-Find или DFS","O(n)","O(n)",
-["Если len(edges) != n-1 → False",
+[
+ "Если len(edges) != n-1 → False",
  "Union-Find: для каждого ребра",
  "  Если уже в одном компоненте → цикл",
  "Return True"],
-"if len(edges)!=n-1: return False\nparent=list(range(n))\ndef find(x):\n    while parent[x]!=x: parent[x]=parent[parent[x]]; x=parent[x]\n    return x\nfor a,b in edges:\n    ra,rb=find(a),find(b)\n    if ra==rb: return False\n    parent[ra]=rb\nreturn True",
+"// Если edges.length != n-1 -> false\nUnion-Find: для каждого ребра\nЕсли уже в одном компоненте -> цикл\nreturn true",
+"function validTree(n, edges) {\n  if (edges.length !== n - 1) return false;\n  const parent = Array.from({ length: n }, (_, i) => i);\n  function find(x) {\n    while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n    return x;\n  }\n  for (const [a, b] of edges) {\n    const ra = find(a), rb = find(b);\n    if (ra === rb) return false;\n    parent[ra] = rb;\n  }\n  return true;\n}",
 "Проверь n-1 рёбер первым — быстрый early exit.",
-["union-find","dfs"]);
+[
+ "union-find",
+ "dfs"]);
 
 add("Graph","Number of Connected Components","M",
+"Подсчитать число связных компонент в неориентированном графе.",
 "Union-Find: начинай с count=n, при объединении разных компонент count--.",
 "Union-Find с path compression","O(n*a(n))~O(n)","O(n)",
-["parent[i]=i, count=n",
+[
+ "parent[i]=i, count=n",
  "Для каждого ребра (a,b): find(a) и find(b)",
  "Если разные корни: union, count--",
  "Return count"],
-"parent=list(range(n))\ndef find(x):\n    while parent[x]!=x:\n        parent[x]=parent[parent[x]]; x=parent[x]\n    return x\ncount=n\nfor a,b in edges:\n    ra,rb=find(a),find(b)\n    if ra!=rb:\n        parent[ra]=rb; count-=1\nreturn count",
+"parent[i]=i, count=n\n// Для каждого ребра (a,b): find(a) и find(b)\n// Если разные корни: union, count--\nreturn count",
+"function countComponents(n, edges) {\n  const parent = Array.from({ length: n }, (_, i) => i);\n  function find(x) {\n    while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }\n    return x;\n  }\n  let count = n;\n  for (const [a, b] of edges) {\n    const ra = find(a), rb = find(b);\n    if (ra !== rb) { parent[ra] = rb; count--; }\n  }\n  return count;\n}",
 "Path compression (parent[x]=parent[parent[x]]) даёт почти O(1) per operation.",
-["union-find"]);
+[
+ "union-find"]);
 
-// INTERVAL
 add("Interval","Insert Interval","M",
+"Вставить новый интервал в отсортированный список, объединив перекрывающиеся.",
 "3 фазы: до вставки, merge перекрывающихся, после вставки.",
 "Linear scan с merge","O(n)","O(n)",
-["Добавляй интервалы где end < newStart",
+[
+ "Добавляй интервалы где end < newStart",
  "Пока start текущего <= newEnd: merge (min start, max end)",
  "Добавь merged интервал",
  "Добавь остаток"],
-"res=[]\ni,n=0,len(intervals)\nwhile i<n and intervals[i][1]<newInterval[0]:\n    res.append(intervals[i]); i+=1\nwhile i<n and intervals[i][0]<=newInterval[1]:\n    newInterval=[min(newInterval[0],intervals[i][0]),\n                 max(newInterval[1],intervals[i][1])]; i+=1\nres.append(newInterval)\nreturn res+intervals[i:]",
+"// Добавляй интервалы где end < newStart\n// Пока start текущего <= newEnd: merge (min start, max end)\n// Добавь merged интервал\n// Добавь остаток",
+"function insert(intervals, newInterval) {\n  const res = [];\n  let i = 0, n = intervals.length;\n  while (i < n && intervals[i][1] < newInterval[0]) res.push(intervals[i++]);\n  while (i < n && intervals[i][0] <= newInterval[1]) {\n    newInterval = [Math.min(newInterval[0], intervals[i][0]), Math.max(newInterval[1], intervals[i][1])];\n    i++;\n  }\n  res.push(newInterval);\n  return res.concat(intervals.slice(i));\n}",
 "Условие перекрытия: intervals[i][0] <= newInterval[1] (не строгое).",
-["intervals","merge"]);
+[
+ "intervals",
+ "merge"]);
 
 add("Interval","Merge Intervals","M",
+"Объединить все перекрывающиеся интервалы в один список.",
 "Sort by start, жадно merge: start <= prev.end → обновляй end = max.",
 "Sort + linear merge","O(n log n)","O(n)",
-["Сортируй по первому элементу",
+[
+ "Сортируй по первому элементу",
  "result = [intervals[0]]",
  "Для каждого [s,e]:",
  "  s <= result[-1][1] → result[-1][1] = max(...)",
  "  Иначе append"],
-"intervals.sort()\nres=[intervals[0]]\nfor s,e in intervals[1:]:\n    if s<=res[-1][1]:\n        res[-1][1]=max(res[-1][1],e)\n    else:\n        res.append([s,e])\nreturn res",
+"intervals.sort((a, b) => a[0] - b[0])\nresult = [intervals[0]]\n// Для каждого [s,e]:\ns <= result[-1][1] -> result[-1][1] = Math.max(...)\nИначе append",
+"function merge(intervals) {\n  intervals.sort((a, b) => a[0] - b[0]);\n  const res = [intervals[0]];\n  for (let i = 1; i < intervals.length; i++) {\n    const [s, e] = intervals[i];\n    if (s <= res[res.length - 1][1]) res[res.length - 1][1] = Math.max(res[res.length - 1][1], e);\n    else res.push([s, e]);\n  }\n  return res;\n}",
 "max(end) обязателен: новый интервал может быть полностью внутри предыдущего.",
-["intervals","sort"]);
+[
+ "intervals",
+ "sort"]);
 
 add("Interval","Non-overlapping Intervals","M",
+"Найти минимальное число интервалов для удаления, чтобы не было пересечений.",
 "Greedy: sort by end. Жадно бери с наименьшим end. Считай удалённые.",
 "Greedy Activity Selection","O(n log n)","O(1)",
-["Сортируй по end",
+[
+ "Сортируй по end",
  "prev_end = -inf, count = 0",
  "s >= prev_end → берём, prev_end = e",
  "Иначе count++ (удаляем)"],
-"intervals.sort(key=lambda x: x[1])\nprev_end=float('-inf')\ncount=0\nfor s,e in intervals:\n    if s>=prev_end: prev_end=e\n    else: count+=1\nreturn count",
+"intervals.sort((a, b) => a[1] - b[1])\nprev_end = -Infinity, count = 0\ns >= prev_end -> берём, prev_end = e\n// Иначе count++ (удаляем)",
+"function eraseOverlapIntervals(intervals) {\n  intervals.sort((a, b) => a[1] - b[1]);\n  let prevEnd = -Infinity, count = 0;\n  for (const [s, e] of intervals) {\n    if (s >= prevEnd) prevEnd = e;\n    else count++;\n  }\n  return count;\n}",
 "Сортировка по END — ключ. По start не работает для activity selection.",
-["greedy","intervals"]);
+[
+ "greedy",
+ "intervals"]);
 
 add("Interval","Meeting Rooms","E",
+"Определить, может ли один человек посетить все встречи без конфликтов.",
 "Sort by start. Если следующий начинается до окончания предыдущего — конфликт.",
 "Sort + overlap check","O(n log n)","O(1)",
-["Сортируй по start",
+[
+ "Сортируй по start",
  "Для i от 1..n:",
  "  intervals[i][0] < intervals[i-1][1] → return False",
  "Return True"],
-"intervals.sort()\nfor i in range(1,len(intervals)):\n    if intervals[i][0]<intervals[i-1][1]:\n        return False\nreturn True",
+"intervals.sort((a, b) => a[0] - b[0])\n// Для i от 1..n:\nintervals[i][0] < intervals[i-1][1] -> return false\nreturn true",
+"function canAttendMeetings(intervals) {\n  intervals.sort((a, b) => a[0] - b[0]);\n  for (let i = 1; i < intervals.length; i++)\n    if (intervals[i][0] < intervals[i - 1][1]) return false;\n  return true;\n}",
 "< а не <=: одна встреча заканчивается когда начинается другая — это OK.",
-["intervals","sort"]);
+[
+ "intervals",
+ "sort"]);
 
 add("Interval","Meeting Rooms II","M",
+"Найти минимальное число переговорных комнат для всех встреч.",
 "Min-heap из end times: если heap[0] <= start — переиспользуй комнату (pop). Иначе добавь новую.",
 "Min-Heap / Greedy","O(n log n)","O(n)",
-["Сортируй по start",
+[
+ "Сортируй по start",
  "heap = []",
  "Для каждого [s,e]:",
  "  heap и heap[0] <= s → heappop",
  "  heappush(e)",
  "Return len(heap)"],
-"import heapq\nintervals.sort()\nheap=[]\nfor s,e in intervals:\n    if heap and heap[0]<=s:\n        heapq.heappop(heap)\n    heapq.heappush(heap,e)\nreturn len(heap)",
+"intervals.sort((a, b) => a[0] - b[0])\nheap = []\n// Для каждого [s,e]:\nheap и heap[0] <= s -> heappop\nheappush(e)\nreturn heap.length",
+"function minMeetingRooms(intervals) {\n  intervals.sort((a, b) => a[0] - b[0]);\n  const heap = [];\n  const push = (v) => { heap.push(v); let i = heap.length - 1; while (i > 0) { const p = (i-1)>>1; if (heap[p] <= heap[i]) break; [heap[p], heap[i]] = [heap[i], heap[p]]; i = p; } };\n  const pop = () => { const top = heap[0]; const last = heap.pop(); if (heap.length) { heap[0] = last; let i = 0; for (;;) { let s = i, l = 2*i+1, r = 2*i+2; if (l < heap.length && heap[l] < heap[s]) s = l; if (r < heap.length && heap[r] < heap[s]) s = r; if (s === i) break; [heap[i], heap[s]] = [heap[s], heap[i]]; i = s; } } return top; };\n  for (const [s, e] of intervals) {\n    if (heap.length && heap[0] <= s) pop();\n    push(e);\n  }\n  return heap.length;\n}",
 "heap хранит только end times. Размер в конце = минимум нужных комнат.",
-["heap","greedy","intervals"]);
+[
+ "heap",
+ "greedy",
+ "intervals"]);
 
-// LINKED LIST
 add("Linked List","Reverse a Linked List","E",
+"Развернуть односвязный список.",
 "Три указателя: prev=None, curr=head. Переключай ссылку назад, двигай вперёд.",
 "Iterative 3-pointer","O(n)","O(1)",
-["prev=None, curr=head",
+[
+ "prev=None, curr=head",
  "Пока curr:",
  "  nxt = curr.next",
  "  curr.next = prev",
  "  prev, curr = curr, nxt",
  "Return prev"],
-"prev, curr = None, head\nwhile curr:\n    nxt = curr.next\n    curr.next = prev\n    prev, curr = curr, nxt\nreturn prev",
+"let prev = null, curr = head\n// Пока curr:\nnxt = curr.next\ncurr.next = prev\nprev, curr = curr, nxt\n// Return prev",
+"function reverseList(head) {\n  let prev = null, curr = head;\n  while (curr) {\n    const nxt = curr.next;\n    curr.next = prev;\n    prev = curr;\n    curr = nxt;\n  }\n  return prev;\n}",
 "Рекурсия: return new_head снизу, переставляй ссылки при распаковке стека. O(n) space.",
-["linked list","iterative"]);
+[
+ "linked list",
+ "iterative"]);
 
 add("Linked List","Detect Cycle in a Linked List","E",
+"Определить, есть ли цикл в связном списке.",
 "Floyd's: slow=1 шаг, fast=2 шага. Встретились → цикл. Для начала цикла: сбрось slow=head.",
 "Floyd's Cycle Detection","O(n)","O(1)",
-["slow=fast=head",
+[
+ "slow=fast=head",
  "Пока fast и fast.next:",
  "  slow=slow.next, fast=fast.next.next",
  "  Если slow==fast → цикл",
  "Для начала: slow=head; двигай оба по 1 до встречи"],
-"slow=fast=head\nwhile fast and fast.next:\n    slow,fast=slow.next,fast.next.next\n    if slow==fast:\n        slow2=head\n        while slow!=slow2:\n            slow,slow2=slow.next,slow2.next\n        return slow  # начало цикла\nreturn None",
+"let slow = head, fast = head\n// Пока fast и fast.next:\nslow=slow.next, fast=fast.next.next\nЕсли slow==fast -> цикл\n// Для начала: slow=head; двигай оба по 1 до встречи",
+"function detectCycle(head) {\n  let slow = head, fast = head;\n  while (fast && fast.next) {\n    slow = slow.next;\n    fast = fast.next.next;\n    if (slow === fast) {\n      let slow2 = head;\n      while (slow !== slow2) { slow = slow.next; slow2 = slow2.next; }\n      return slow;\n    }\n  }\n  return null;\n}",
 "Математическое доказательство: расстояния совпадают — head и точка встречи.",
-["two pointers","cycle"]);
+[
+ "two pointers",
+ "cycle"]);
 
 add("Linked List","Merge Two Sorted Lists","E",
+"Объединить два отсортированных связных списка в один.",
 "Dummy node + iteration: сравнивай heads, присоединяй меньший.",
 "Dummy node + linear merge","O(n+m)","O(1)",
-["dummy=ListNode(0), cur=dummy",
+[
+ "dummy=ListNode(0), cur=dummy",
  "Пока оба не null: добавляй меньший, двигай его",
  "cur.next = l1 or l2 (остаток)",
  "Return dummy.next"],
-"dummy=ListNode(0)\ncur=dummy\nwhile l1 and l2:\n    if l1.val<=l2.val: cur.next=l1; l1=l1.next\n    else: cur.next=l2; l2=l2.next\n    cur=cur.next\ncur.next=l1 or l2\nreturn dummy.next",
+"const dummy = new ListNode(0); let cur = dummy\n// Пока оба не null: добавляй меньший, двигай его\ncur.next = l1 or l2 (остаток)\n// Return dummy.next",
+"function mergeTwoLists(l1, l2) {\n  const dummy = new ListNode(0);\n  let cur = dummy;\n  while (l1 && l2) {\n    if (l1.val <= l2.val) { cur.next = l1; l1 = l1.next; }\n    else { cur.next = l2; l2 = l2.next; }\n    cur = cur.next;\n  }\n  cur.next = l1 || l2;\n  return dummy.next;\n}",
 "cur.next = l1 or l2 присоединяет оставшийся список целиком.",
-["linked list","merge"]);
+[
+ "linked list",
+ "merge"]);
 
 add("Linked List","Merge K Sorted Lists","H",
+"Объединить k отсортированных связных списков в один.",
 "Min-heap из K элементов: извлекай минимум, добавляй следующий из того же списка.",
 "Min-Heap K-way merge","O(N log K)","O(K)",
-["heap = первые элементы всех K списков",
+[
+ "heap = первые элементы всех K списков",
  "Пока heap:",
  "  heappop → добавь в result",
  "  Если есть next → heappush(next)"],
-"import heapq\nheap=[]\nfor i,node in enumerate(lists):\n    if node: heapq.heappush(heap,(node.val,i,node))\ndummy=cur=ListNode(0)\nwhile heap:\n    val,i,node=heapq.heappop(heap)\n    cur.next=node; cur=cur.next\n    if node.next: heapq.heappush(heap,(node.next.val,i,node.next))\nreturn dummy.next",
+"heap = первые элементы всех K списков\n// Пока heap:\nheappop -> добавь в result\nЕсли есть next -> heappush(next)",
+"function mergeKLists(lists) {\n  const heap = [];\n  const push = (node, i) => { heap.push([node.val, i, node]); let j = heap.length - 1; while (j > 0) { const p = (j-1)>>1; if (heap[p][0] <= heap[j][0]) break; [heap[p], heap[j]] = [heap[j], heap[p]]; j = p; } };\n  const pop = () => { const top = heap[0]; const last = heap.pop(); if (heap.length) { heap[0] = last; let i = 0; for (;;) { let s = i, l = 2*i+1, r = 2*i+2; if (l < heap.length && heap[l][0] < heap[s][0]) s = l; if (r < heap.length && heap[r][0] < heap[s][0]) s = r; if (s === i) break; [heap[i], heap[s]] = [heap[s], heap[i]]; i = s; } } return top; };\n  lists.forEach((node, i) => { if (node) push(node, i); });\n  const dummy = new ListNode(0);\n  let cur = dummy;\n  while (heap.length) {\n    const [, i, node] = pop();\n    cur.next = node; cur = cur.next;\n    if (node.next) push(node.next, i);\n  }\n  return dummy.next;\n}",
 "Кортеж (val, index, node) — index нужен для tie-breaking при одинаковых val.",
-["heap","merge","K-way"]);
+[
+ "heap",
+ "merge",
+ "K-way"]);
 
 add("Linked List","Remove Nth Node From End Of List","M",
+"Удалить n-й узел с конца односвязного списка.",
 "Two pointers: fast уходит на N+1 шагов вперёд. Оба идут вместе. Slow = предыдущий удаляемому.",
 "Two Pointers с gap N+1","O(n)","O(1)",
-["dummy.next=head, slow=fast=dummy",
+[
+ "dummy.next=head, slow=fast=dummy",
  "Двигай fast на N+1 шагов",
  "Пока fast: slow=slow.next, fast=fast.next",
  "slow.next = slow.next.next",
  "Return dummy.next"],
-"dummy=ListNode(0,head)\nslow=fast=dummy\nfor _ in range(n+1):\n    fast=fast.next\nwhile fast:\n    slow,fast=slow.next,fast.next\nslow.next=slow.next.next\nreturn dummy.next",
+"dummy.next=head, slow=fast=dummy\n// Двигай fast на N+1 шагов\n// Пока fast: slow=slow.next, fast=fast.next\nslow.next = slow.next.next\n// Return dummy.next",
+"function removeNthFromEnd(head, n) {\n  const dummy = new ListNode(0, head);\n  let slow = dummy, fast = dummy;\n  for (let i = 0; i <= n; i++) fast = fast.next;\n  while (fast) { slow = slow.next; fast = fast.next; }\n  slow.next = slow.next.next;\n  return dummy.next;\n}",
 "N+1 шагов (не N) чтобы slow стоял на предыдущем удаляемого.",
-["two pointers","linked list"]);
+[
+ "two pointers",
+ "linked list"]);
 
 add("Linked List","Reorder List","M",
+"Переупорядочить список: L0→Ln→L1→Ln-1→...",
 "1) Найди середину. 2) Разверни вторую половину. 3) Merge поочерёдно.",
 "Find middle + Reverse + Merge","O(n)","O(1)",
-["Slow/fast → середина",
+[
+ "Slow/fast → середина",
  "Разорви: second=slow.next; slow.next=None",
  "Разверни second половину",
  "Merge: берём поочерёдно из first и second"],
-"slow,fast=head,head.next\nwhile fast and fast.next: slow=slow.next; fast=fast.next.next\nsecond=slow.next; slow.next=None\nprev=None\nwhile second: nxt=second.next; second.next=prev; prev=second; second=nxt\nsecond=prev\nfirst=head\nwhile second:\n    t1,t2=first.next,second.next\n    first.next=second; second.next=t1\n    first,second=t1,t2",
+"Slow/fast -> середина\n// Разорви: second=slow.next; slow.next=null\n// Разверни second половину\n// Merge: берём поочерёдно из first и second",
+"function reorderList(head) {\n  let slow = head, fast = head.next;\n  while (fast && fast.next) { slow = slow.next; fast = fast.next.next; }\n  let second = slow.next;\n  slow.next = null;\n  let prev = null;\n  while (second) { const nxt = second.next; second.next = prev; prev = second; second = nxt; }\n  second = prev;\n  let first = head;\n  while (second) {\n    const t1 = first.next, t2 = second.next;\n    first.next = second; second.next = t1;\n    first = t1; second = t2;\n  }\n}",
 "Разорви связь (slow.next=None) до разворота — иначе reversed list будет содержать весь хвост.",
-["linked list","two pointers"]);
+[
+ "linked list",
+ "two pointers"]);
 
-// MATRIX
 add("Matrix","Set Matrix Zeroes","M",
+"Обнулить строки и столбцы, содержащие ноль, in-place.",
 "Первая строка и столбец как флаги. Отдельно трекай нужно ли обнулять их самих.",
 "In-place O(1) extra space","O(mxn)","O(1)",
-["Проверь: есть ли 0 в row0? В col0? Запомни флагами",
+[
+ "Проверь: есть ли 0 в row0? В col0? Запомни флагами",
  "Для (i,j) где i>0,j>0: если 0 → matrix[i][0]=matrix[0][j]=0",
  "Обнули строки/столбцы по флагам",
  "В последнюю очередь: обнули row0 и col0 если нужно"],
-"row0=any(matrix[0][j]==0 for j in range(C))\ncol0=any(matrix[i][0]==0 for i in range(R))\nfor i in range(1,R):\n    for j in range(1,C):\n        if matrix[i][j]==0: matrix[i][0]=matrix[0][j]=0\nfor i in range(1,R):\n    if matrix[i][0]==0:\n        for j in range(1,C): matrix[i][j]=0\nfor j in range(1,C):\n    if matrix[0][j]==0:\n        for i in range(1,R): matrix[i][j]=0\nif row0:\n    for j in range(C): matrix[0][j]=0\nif col0:\n    for i in range(R): matrix[i][0]=0",
+"// Проверь: есть ли 0 в row0? В col0? Запомни флагами\n// Обнули строки/столбцы по флагам\n// В последнюю очередь: обнули row0 и col0 если нужно",
+"function setZeroes(matrix) {\n  const R = matrix.length, C = matrix[0].length;\n  let row0 = matrix[0].some(v => v === 0);\n  let col0 = matrix.some(row => row[0] === 0);\n  for (let i = 1; i < R; i++)\n    for (let j = 1; j < C; j++)\n      if (matrix[i][j] === 0) { matrix[i][0] = 0; matrix[0][j] = 0; }\n  for (let i = 1; i < R; i++)\n    if (matrix[i][0] === 0)\n      for (let j = 1; j < C; j++) matrix[i][j] = 0;\n  for (let j = 1; j < C; j++)\n    if (matrix[0][j] === 0)\n      for (let i = 1; i < R; i++) matrix[i][j] = 0;\n  if (row0) for (let j = 0; j < C; j++) matrix[0][j] = 0;\n  if (col0) for (let i = 0; i < R; i++) matrix[i][0] = 0;\n}",
 "Обрабатывай row0/col0 В ПОСЛЕДНЮЮ очередь — иначе перезапишешь флаги.",
-["matrix","in-place"]);
+[
+ "matrix",
+ "in-place"]);
 
 add("Matrix","Spiral Matrix","M",
+"Вернуть все элементы матрицы в порядке спирального обхода.",
 "4 указателя (top/bottom/left/right). Обходи 4 стороны слоями, сужай границы.",
 "Layer-by-layer traversal","O(mxn)","O(1) extra",
-["top=0,bottom=m-1,left=0,right=n-1",
+[
+ "top=0,bottom=m-1,left=0,right=n-1",
  "→ top строка (left→right); top++",
  "↓ right столбец (top→bottom); right--",
  "← bottom строка если top<=bottom; bottom--",
  "↑ left столбец если left<=right; left++"],
-"res=[]\nwhile top<=bottom and left<=right:\n    for c in range(left,right+1): res.append(m[top][c]); top+=1\n    for r in range(top,bottom+1): res.append(m[r][right]); right-=1\n    if top<=bottom:\n        for c in range(right,left-1,-1): res.append(m[bottom][c]); bottom-=1\n    if left<=right:\n        for r in range(bottom,top-1,-1): res.append(m[r][left]); left+=1\nreturn res",
+"top=0,bottom=m-1,left=0,right=n-1\n// -> top строка (left->right); top++\nv right столбец (top->bottom); right--\n// <- bottom строка если top<=bottom; bottom--\n// ^ left столбец если left<=right; left++",
+"function spiralOrder(matrix) {\n  const res = [];\n  let top = 0, bottom = matrix.length - 1, left = 0, right = matrix[0].length - 1;\n  while (top <= bottom && left <= right) {\n    for (let c = left; c <= right; c++) res.push(matrix[top][c]);\n    top++;\n    for (let r = top; r <= bottom; r++) res.push(matrix[r][right]);\n    right--;\n    if (top <= bottom) {\n      for (let c = right; c >= left; c--) res.push(matrix[bottom][c]);\n      bottom--;\n    }\n    if (left <= right) {\n      for (let r = bottom; r >= top; r--) res.push(matrix[r][left]);\n      left++;\n    }\n  }\n  return res;\n}",
 "Проверяй top<=bottom и left<=right перед bottom и left проходами — иначе дубли.",
-["matrix","simulation"]);
+[
+ "matrix",
+ "simulation"]);
 
 add("Matrix","Rotate Image","M",
+"Повернуть квадратную матрицу на 90° по часовой стрелке in-place.",
 "Transpose (swap [i][j] и [j][i]) + reverse каждую строку = 90 clockwise. In-place.",
 "Transpose + Reverse rows","O(n^2)","O(1)",
-["Transpose: for i: for j>i: swap matrix[i][j], matrix[j][i]",
+[
+ "Transpose: for i: for j>i: swap matrix[i][j], matrix[j][i]",
  "Reverse each row: row.reverse()"],
-"n=len(matrix)\nfor i in range(n):\n    for j in range(i+1,n):\n        matrix[i][j],matrix[j][i]=matrix[j][i],matrix[i][j]\nfor row in matrix:\n    row.reverse()",
+"Transpose: for i: for j>i: swap matrix[i][j], matrix[j][i]\n// Reverse each row: row.reverse()\n// ...",
+"function rotate(matrix) {\n  const n = matrix.length;\n  for (let i = 0; i < n; i++)\n    for (let j = i + 1; j < n; j++)\n      [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];\n  for (const row of matrix) row.reverse();\n}",
 "Counter-clockwise: сначала reverse rows, потом transpose (обратный порядок).",
-["matrix","in-place"]);
+[
+ "matrix",
+ "in-place"]);
 
 add("Matrix","Word Search","M",
+"Определить, существует ли слово в сетке букв (соседние клетки).",
 "DFS backtracking из каждой ячейки. Помечай '#', восстанавливай после возврата.",
 "DFS Backtracking","O(mxn x 4^L)","O(L) стек",
-["Для каждой (i,j): если == word[0] → dfs",
+[
+ "Для каждой (i,j): если == word[0] → dfs",
  "dfs(r,c,k): k==len(word) → True",
  "Boundary + visited ('#') check",
  "Замени на '#', рекурси в 4 стороны, восстанови"],
-"def dfs(r,c,k):\n    if k==len(word): return True\n    if r<0 or r>=R or c<0 or c>=C or board[r][c]!=word[k]: return False\n    tmp,board[r][c]=board[r][c],'#'\n    res=dfs(r+1,c,k+1) or dfs(r-1,c,k+1) or dfs(r,c+1,k+1) or dfs(r,c-1,k+1)\n    board[r][c]=tmp\n    return res\nfor r in range(R):\n    for c in range(C):\n        if dfs(r,c,0): return True\nreturn False",
+"// Для каждой (i,j): если == word[0] -> dfs\ndfs(r,c,k): k==word.length -> true\nBoundary + visited ('#') check\n// Замени на '#', рекурси в 4 стороны, восстанови",
+"function exist(board, word) {\n  const R = board.length, C = board[0].length;\n  function dfs(r, c, k) {\n    if (k === word.length) return true;\n    if (r < 0 || r >= R || c < 0 || c >= C || board[r][c] !== word[k]) return false;\n    const tmp = board[r][c];\n    board[r][c] = '#';\n    const found = dfs(r+1,c,k+1) || dfs(r-1,c,k+1) || dfs(r,c+1,k+1) || dfs(r,c-1,k+1);\n    board[r][c] = tmp;\n    return found;\n  }\n  for (let r = 0; r < R; r++)\n    for (let c = 0; c < C; c++)\n      if (dfs(r, c, 0)) return true;\n  return false;\n}",
 "Восстанавливай символ после dfs — другие пути иначе видят '#'.",
-["dfs","backtracking","matrix"]);
+[
+ "dfs",
+ "backtracking",
+ "matrix"]);
 
-// STRING
 add("String","Longest Substring Without Repeating Characters","M",
+"Найти длину самой длинной подстроки без повторяющихся символов.",
 "Sliding window + HashMap: при дубле двигай left за предыдущую позицию символа.",
 "Sliding Window + HashMap","O(n)","O(min(m,n))",
-["left=0, res=0, seen={}",
+[
+ "left=0, res=0, seen={}",
  "Для right, c:",
  "  c в seen и seen[c] >= left → left=seen[c]+1",
  "  seen[c]=right",
  "  res=max(res, right-left+1)"],
-"left=res=0\nseen={}\nfor right,c in enumerate(s):\n    if c in seen and seen[c]>=left:\n        left=seen[c]+1\n    seen[c]=right\n    res=max(res,right-left+1)\nreturn res",
+"let left = 0, res = 0; const seen = new Map()\n// Для right, c:\nc в seen и seen[c] >= left -> left=seen[c]+1\nseen[c]=right\nres=Math.max(res, right-left+1)",
+"function lengthOfLongestSubstring(s) {\n  let left = 0, res = 0;\n  const seen = new Map();\n  for (let right = 0; right < s.length; right++) {\n    const c = s[right];\n    if (seen.has(c) && seen.get(c) >= left) left = seen.get(c) + 1;\n    seen.set(c, right);\n    res = Math.max(res, right - left + 1);\n  }\n  return res;\n}",
 "left = max(left, seen[c]+1) — окно не должно сжиматься назад.",
-["sliding window","hash map"]);
+[
+ "sliding window",
+ "hash map"]);
 
 add("String","Longest Repeating Character Replacement","M",
+"Найти длину самой длинной подстроки с не более k заменами символов.",
 "Sliding window: window_size - max_count <= k. Если нет — сдвигай left.",
 "Sliding Window","O(n)","O(1)",
-["count={}, max_count=0, left=0, res=0",
+[
+ "count={}, max_count=0, left=0, res=0",
  "Для right, c: count[c]++",
  "max_count = max(max_count, count[c])",
  "Если (right-left+1) - max_count > k: count[s[left]]--, left++",
  "res = max(res, right-left+1)"],
-"count={}\nmax_count=left=res=0\nfor right,c in enumerate(s):\n    count[c]=count.get(c,0)+1\n    max_count=max(max_count,count[c])\n    if (right-left+1)-max_count>k:\n        count[s[left]]-=1; left+=1\n    res=max(res,right-left+1)\nreturn res",
+"count={}, max_count=0, left=0, res=0\n// Для right, c: count[c]++\nmax_count = Math.max(max_count, count[c])\nres = Math.max(res, right-left+1)",
+"function characterReplacement(s, k) {\n  const count = {};\n  let maxCount = 0, left = 0, res = 0;\n  for (let right = 0; right < s.length; right++) {\n    const c = s[right];\n    count[c] = (count[c] || 0) + 1;\n    maxCount = Math.max(maxCount, count[c]);\n    if (right - left + 1 - maxCount > k) count[s[left++]]--;\n    res = Math.max(res, right - left + 1);\n  }\n  return res;\n}",
 "max_count не уменьшаем при сдвиге left — ищем только большее значение.",
-["sliding window"]);
+[
+ "sliding window"]);
 
 add("String","Minimum Window Substring","H",
+"Найти минимальное окно в s, содержащее все символы t.",
 "Sliding window: need/have counts. Сжимай когда formed==required.",
 "Sliding Window с counters","O(|s|+|t|)","O(|s|+|t|)",
-["need=Counter(t), have={}, formed=0, required=len(need)",
+[
+ "need=Counter(t), have={}, formed=0, required=len(need)",
  "Расширяй right: char в need и count совпал → formed--",
  "Пока formed==0: обновляй min_window, сдвигай left",
  "Return min_window"],
-"from collections import Counter\nneed,have=Counter(t),{}\nformed=required=len(need)\nres,res_len=[-1,-1],float('inf')\nl=0\nfor r,c in enumerate(s):\n    have[c]=have.get(c,0)+1\n    if c in need and have[c]==need[c]: formed-=1\n    while formed==0:\n        if r-l+1<res_len: res_len=r-l+1; res=[l,r]\n        have[s[l]]-=1\n        if s[l] in need and have[s[l]]<need[s[l]]: formed+=1\n        l+=1\nreturn s[res[0]:res[1]+1] if res_len!=float('inf') else ''",
+"need=Counter(t), have={}, formed=0, required=need.length\n// Расширяй right: char в need и count совпал -> formed--\n// Пока formed==0: обновляй min_window, сдвигай left\n// Return min_window",
+"function minWindow(s, t) {\n  const need = {};\n  for (const c of t) need[c] = (need[c] || 0) + 1;\n  const have = {};\n  let formed = 0, required = Object.keys(need).length;\n  let res = [-1, -1], resLen = Infinity, l = 0;\n  for (let r = 0; r < s.length; r++) {\n    const c = s[r];\n    have[c] = (have[c] || 0) + 1;\n    if (need[c] && have[c] === need[c]) formed++;\n    while (formed === required) {\n      if (r - l + 1 < resLen) { resLen = r - l + 1; res = [l, r]; }\n      have[s[l]]--;\n      if (need[s[l]] && have[s[l]] < need[s[l]]) formed++;\n      l++;\n    }\n  }\n  return resLen !== Infinity ? s.slice(res[0], res[1] + 1) : '';\n}",
 "formed считает символы с ДОСТАТОЧНЫМ количеством, не все символы отдельно.",
-["sliding window","hard"]);
+[
+ "sliding window",
+ "hard"]);
 
 add("String","Valid Anagram","E",
+"Проверить, являются ли две строки анаграммами.",
 "Одинаковые частоты всех символов = анаграмма. Counter или массив [26].",
 "Counter comparison","O(n)","O(1) — 26 символов",
-["Если len(s)!=len(t) → False",
+[
+ "Если len(s)!=len(t) → False",
  "count[26] = 0",
  "Для каждого i: count[s[i]]++, count[t[i]]--",
  "Если любой count[i]!=0 → False"],
-"# Python one-liner\nreturn Counter(s) == Counter(t)\n\n# O(1) space\nif len(s)!=len(t): return False\ncount=[0]*26\nfor a,b in zip(s,t):\n    count[ord(a)-97]+=1; count[ord(b)-97]-=1\nreturn all(c==0 for c in count)",
+"// Если s.length!=t.length -> false\ncount[26] = 0\n// Для каждого i: count[s[i]]++, count[t[i]]--\n// Если любой count[i]!=0 -> false",
+"function isAnagram(s, t) {\n  if (s.length !== t.length) return false;\n  const count = new Array(26).fill(0);\n  for (let i = 0; i < s.length; i++) {\n    count[s.charCodeAt(i) - 97]++;\n    count[t.charCodeAt(i) - 97]--;\n  }\n  return count.every(c => c === 0);\n}",
 "Если возможны Unicode символы — Counter безопаснее массива [26].",
-["hash map","counter"]);
+[
+ "hash map",
+ "counter"]);
 
 add("String","Group Anagrams","M",
+"Сгруппировать строки, являющиеся анаграммами друг друга.",
 "Ключ = sorted(word). Все слова с одинаковым ключом — одна группа.",
 "HashMap с sorted ключом","O(n x k log k)","O(nxk)",
-["groups = defaultdict(list)",
+[
+ "groups = defaultdict(list)",
  "Для каждого слова: key = tuple(sorted(word))",
  "groups[key].append(word)",
  "Return list(groups.values())"],
-"from collections import defaultdict\ngroups=defaultdict(list)\nfor word in strs:\n    key=tuple(sorted(word))\n    groups[key].append(word)\nreturn list(groups.values())",
+"const groups = new Map()\n// Для каждого слова: key = tuple(sorted(word))\n// groups[key].append(word)\n// Return list(groups.values())",
+"function groupAnagrams(strs) {\n  const groups = new Map();\n  for (const word of strs) {\n    const key = [...word].sort().join('');\n    if (!groups.has(key)) groups.set(key, []);\n    groups.get(key).push(word);\n  }\n  return [...groups.values()];\n}",
 "Вместо sorted можно count[26] как ключ — O(nxk) но сложнее читать.",
-["hash map","sorting"]);
+[
+ "hash map",
+ "sorting"]);
 
 add("String","Valid Parentheses","E",
+"Проверить, корректно ли расставлены скобки в строке.",
 "Stack: push открывающие. При закрывающей проверяй top = парный символ.",
 "Stack","O(n)","O(n)",
-["stack=[], map={')':'(', '}':'{', ']':'['}",
+[
+ "stack=[], map={')':'(', '}':'{', ']':'['}",
  "Для char:",
  "  Если закрывающий: стек пустой или pop != map[char] → False",
  "  Иначе push",
  "Return not stack"],
-"stack=[]\nmp={')':'(', '}':'{', ']':'['}\nfor c in s:\n    if c in mp:\n        if not stack or stack[-1]!=mp[c]: return False\n        stack.pop()\n    else:\n        stack.append(c)\nreturn not stack",
+"const stack = [], mp = { \")\":\"(\", \"}\":\"{\", \"]\":\"[\" }\n// Для char:\nЕсли закрывающий: стек пустой или pop != map[char] -> false\nИначе push\nreturn stack.length === 0",
+"function isValid(s) {\n  const stack = [];\n  const mp = { ')': '(', '}': '{', ']': '[' };\n  for (const c of s) {\n    if (c in mp) {\n      if (!stack.length || stack.pop() !== mp[c]) return false;\n    } else stack.push(c);\n  }\n  return !stack.length;\n}",
 "Пустой стек при встрече закрывающей = invalid. Непустой в конце = invalid.",
-["stack"]);
+[
+ "stack"]);
 
 add("String","Valid Palindrome","E",
+"Проверить, является ли строка палиндромом (игнорируя не-буквы).",
 "Two pointers: скипай non-alnum символы, сравнивай lowercase с обоих концов.",
 "Two Pointers + isalnum","O(n)","O(1)",
-["l=0, r=len(s)-1",
+[
+ "l=0, r=len(s)-1",
  "Пока l<r:",
  "  Скипай non-alnum с обоих сторон",
  "  s[l].lower() != s[r].lower() → False",
  "  l++, r--"],
-"l,r=0,len(s)-1\nwhile l<r:\n    while l<r and not s[l].isalnum(): l+=1\n    while l<r and not s[r].isalnum(): r-=1\n    if s[l].lower()!=s[r].lower(): return False\n    l+=1; r-=1\nreturn True",
+"l=0, r=s.length-1\n// Пока l<r:\nСкипай non-alnum с обоих сторон\ns[l].lower() != s[r].lower() -> false\nl++, r--",
+"function isPalindrome(s) {\n  let l = 0, r = s.length - 1;\n  while (l < r) {\n    while (l < r && !/[a-z0-9]/i.test(s[l])) l++;\n    while (l < r && !/[a-z0-9]/i.test(s[r])) r--;\n    if (s[l].toLowerCase() !== s[r].toLowerCase()) return false;\n    l++; r--;\n  }\n  return true;\n}",
 "isalnum() включает цифры — оба типа валидны для palindrome check.",
-["two pointers"]);
+[
+ "two pointers"]);
 
 add("String","Longest Palindromic Substring","M",
+"Найти самую длинную палиндромную подстроку.",
 "Expand Around Center: для каждого центра разворачивай. Odd и even центры.",
 "Expand Around Center","O(n^2)","O(1)",
-["Для каждого i:",
+[
+ "Для каждого i:",
  "  expand(i,i) — нечётные",
  "  expand(i,i+1) — чётные",
  "  expand: пока s[l]==s[r]: l--, r++",
  "  Обновляй res при каждом расширении"],
-"res=''\nfor i in range(len(s)):\n    for l,r in [(i,i),(i,i+1)]:\n        while l>=0 and r<len(s) and s[l]==s[r]:\n            if r-l+1>len(res): res=s[l:r+1]\n            l-=1; r+=1\nreturn res",
+"// Для каждого i:\nexpand(i,i) — нечётные\nexpand(i,i+1) — чётные\nexpand: пока s[l]==s[r]: l--, r++\nОбновляй res при каждом расширении",
+"function longestPalindrome(s) {\n  let res = '';\n  for (let i = 0; i < s.length; i++) {\n    for (let [l, r] of [[i, i], [i, i + 1]]) {\n      while (l >= 0 && r < s.length && s[l] === s[r]) {\n        if (r - l + 1 > res.length) res = s.slice(l, r + 1);\n        l--; r++;\n      }\n    }\n  }\n  return res;\n}",
 "DP решение O(n^2) time но O(n^2) space. Expand лучше.",
-["expand around center"]);
+[
+ "expand around center"]);
 
 add("String","Palindromic Substrings","M",
+"Подсчитать количество палиндромных подстрок в строке.",
 "Expand Around Center: count++ при каждом успешном расширении.",
 "Expand Around Center","O(n^2)","O(1)",
-["count = 0",
+[
+ "count = 0",
  "Для каждого центра (2n-1 центров):",
  "  Разворачивай пока palindrome: l--, r++",
  "  Каждое расширение: count++"],
-"count=0\nfor i in range(len(s)):\n    for l,r in [(i,i),(i,i+1)]:\n        while l>=0 and r<len(s) and s[l]==s[r]:\n            count+=1; l-=1; r+=1\nreturn count",
+"let count = 0\n// Для каждого центра (2n-1 центров):\nРазворачивай пока palindrome: l--, r++\nКаждое расширение: count++",
+"function countSubstrings(s) {\n  let count = 0;\n  for (let i = 0; i < s.length; i++) {\n    for (let [l, r] of [[i, i], [i, i + 1]]) {\n      while (l >= 0 && r < s.length && s[l] === s[r]) { count++; l--; r++; }\n    }\n  }\n  return count;\n}",
 "2n-1 центров: n нечётных + (n-1) чётных. Не забудь оба варианта.",
-["expand around center"]);
+[
+ "expand around center"]);
 
 add("String","Encode and Decode Strings","M",
+"Закодировать массив строк в одну строку и декодировать обратно.",
 "Кодируй как 'длина#строка' — '#' может быть в строке, но длина предохраняет.",
 "Length-prefix encoding","O(n)","O(n)",
-["encode: join(f'{len(s)}#{s}' for s in strs)",
+[
+ "encode: join(f'{len(s)}#{s}' for s in strs)",
  "decode: i=0; j=index('#' от i); length=int(s[i:j])",
  "  res.append(s[j+1:j+1+length]); i=j+1+length"],
-"def encode(strs):\n    return ''.join(str(len(s))+'#'+s for s in strs)\n\ndef decode(s):\n    res,i=[],0\n    while i<len(s):\n        j=s.index('#',i)\n        l=int(s[i:j])\n        res.append(s[j+1:j+1+l])\n        i=j+1+l\n    return res",
+"strs.map(s => s.length + \"#\" + s).join(\"\")\ndecode: i=0; j=index('#' от i); length=int(s[i:j])\nres.append(s[j+1:j+1+length]); i=j+1+length",
+"function encode(strs) {\n  return strs.map(s => s.length + '#' + s).join('');\n}\nfunction decode(s) {\n  const res = [];\n  let i = 0;\n  while (i < s.length) {\n    const j = s.indexOf('#', i);\n    const len = parseInt(s.slice(i, j), 10);\n    res.push(s.slice(j + 1, j + 1 + len));\n    i = j + 1 + len;\n  }\n  return res;\n}",
 "Сплит по '#' не работает — '#' может быть в строке. Длина + смещение надёжнее.",
-["string encoding"]);
+[
+ "string encoding"]);
 
-// TREE
 add("Tree","Maximum Depth of Binary Tree","E",
+"Найти максимальную глубину бинарного дерева.",
 "DFS: глубина = 1 + max(depth(left), depth(right)). База: None = 0.",
 "DFS recursion / BFS level count","O(n)","O(h)",
-["return 0 if not root",
+[
+ "return 0 if not root",
  "return 1 + max(maxDepth(root.left), maxDepth(root.right))"],
-"def maxDepth(root):\n    if not root: return 0\n    return 1+max(maxDepth(root.left),maxDepth(root.right))",
+"if (!root) return 0\nreturn 1 + Math.max(maxDepth(root.left), maxDepth(root.right))\n// ...",
+"function maxDepth(root) {\n  if (!root) return 0;\n  return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));\n}",
 "BFS: глубина = количество уровней. DFS элегантнее.",
-["dfs","recursion"]);
+[
+ "dfs",
+ "recursion"]);
 
 add("Tree","Same Tree","E",
+"Проверить, идентичны ли два бинарных дерева.",
 "Рекурсивно: оба None = True. Один None или разные val = False. Рекурси в оба.",
 "DFS recursion","O(n)","O(h)",
-["Оба None → True",
+[
+ "Оба None → True",
  "Один None → False",
  "p.val != q.val → False",
  "Return same(p.left,q.left) and same(p.right,q.right)"],
-"def isSameTree(p,q):\n    if not p and not q: return True\n    if not p or not q: return False\n    if p.val!=q.val: return False\n    return isSameTree(p.left,q.left) and isSameTree(p.right,q.right)",
+"if (!p && !q) return true\nif (!p || !q) return false\np.val != q.val -> false\n// Return same(p.left,q.left) and same(p.right,q.right)",
+"function isSameTree(p, q) {\n  if (!p && !q) return true;\n  if (!p || !q) return false;\n  if (p.val !== q.val) return false;\n  return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);\n}",
 "Порядок проверок важен: сначала оба None, потом один None, потом val.",
-["dfs","recursion"]);
+[
+ "dfs",
+ "recursion"]);
 
 add("Tree","Invert/Flip Binary Tree","E",
+"Инвертировать бинарное дерево (поменять левое и правое поддеревья).",
 "Рекурсивно: swap left и right, рекурси в оба. Одна строка.",
 "DFS recursion","O(n)","O(h)",
-["Если None → return None",
+[
+ "Если None → return None",
  "root.left, root.right = invert(root.right), invert(root.left)",
  "Return root"],
-"def invertTree(root):\n    if not root: return None\n    root.left,root.right=invertTree(root.right),invertTree(root.left)\n    return root",
+"// Если null -> return null\nroot.left, root.right = invert(root.right), invert(root.left)\n// Return root",
+"function invertTree(root) {\n  if (!root) return null;\n  [root.left, root.right] = [invertTree(root.right), invertTree(root.left)];\n  return root;\n}",
 "BFS-версия: добавляй в очередь, свапай children при обработке.",
-["dfs","recursion"]);
+[
+ "dfs",
+ "recursion"]);
 
 add("Tree","Binary Tree Maximum Path Sum","H",
+"Найти максимальную сумму пути в бинарном дереве (любой узел — начало/конец).",
 "Post-order DFS: gain() возвращает max вклад вниз. Global max = left+right+val.",
 "Post-order DFS с global max","O(n)","O(h)",
-["max_sum = -inf (global)",
+[
+ "max_sum = -inf (global)",
  "gain(node): если None → 0",
  "lg = max(gain(left), 0), rg = max(gain(right), 0)",
  "max_sum = max(max_sum, node.val + lg + rg)",
  "Return node.val + max(lg, rg) — только ОДИН путь"],
-"res=[float('-inf')]\ndef gain(node):\n    if not node: return 0\n    lg=max(gain(node.left),0)\n    rg=max(gain(node.right),0)\n    res[0]=max(res[0],node.val+lg+rg)\n    return node.val+max(lg,rg)\ngain(root)\nreturn res[0]",
+"max_sum = -Infinity (global)\ngain(node): если null -> 0\nlg = Math.max(gain(left), 0), rg = Math.max(gain(right), 0)\nmax_sum = Math.max(max_sum, node.val + lg + rg)\nReturn node.val + Math.max(lg, rg) — только ОДИН путь",
+"function maxPathSum(root) {\n  let res = -Infinity;\n  function gain(node) {\n    if (!node) return 0;\n    const lg = Math.max(gain(node.left), 0);\n    const rg = Math.max(gain(node.right), 0);\n    res = Math.max(res, node.val + lg + rg);\n    return node.val + Math.max(lg, rg);\n  }\n  gain(root);\n  return res;\n}",
 "gain() возвращает только одно направление. max_sum обновляется внутри для пути через node.",
-["dfs","post-order","hard"]);
+[
+ "dfs",
+ "post-order",
+ "hard"]);
 
 add("Tree","Binary Tree Level Order Traversal","M",
+"Вернуть значения узлов по уровням (слева направо).",
 "BFS: фиксируй len(queue) в начале уровня — обрабатывай ровно столько элементов.",
 "BFS с level tracking","O(n)","O(n)",
-["queue=deque([root]), res=[]",
+[
+ "queue=deque([root]), res=[]",
  "Пока queue: level_size=len(queue), level=[]",
  "N раз: pop, добавь в level, push children",
  "res.append(level)"],
-"from collections import deque\nres=[]\nq=deque([root])\nwhile q:\n    level=[]\n    for _ in range(len(q)):\n        node=q.popleft()\n        level.append(node.val)\n        if node.left: q.append(node.left)\n        if node.right: q.append(node.right)\n    res.append(level)\nreturn res",
+"const q = [root], res = []\n// Пока queue: level_size=queue.length, level=[]\n// N раз: pop, добавь в level, push children\n// res.append(level)",
+"function levelOrder(root) {\n  if (!root) return [];\n  const res = [], q = [root];\n  while (q.length) {\n    const level = [];\n    for (let i = q.length; i > 0; i--) {\n      const node = q.shift();\n      level.push(node.val);\n      if (node.left) q.push(node.left);\n      if (node.right) q.push(node.right);\n    }\n    res.push(level);\n  }\n  return res;\n}",
 "Фиксируй len(q) ДО цикла — в процессе добавления len меняется.",
-["BFS","level order"]);
+[
+ "BFS",
+ "level order"]);
 
 add("Tree","Serialize and Deserialize Binary Tree","H",
+"Сериализовать и десериализовать бинарное дерево в строку.",
 "Preorder DFS: val или 'N' для null. Deserialize: consume токены через iter().",
 "Preorder serialization","O(n)","O(n)",
-["serialize: preorder DFS, None → 'N', join через ','",
+[
+ "serialize: preorder DFS, None → 'N', join через ','",
  "deserialize: split, iter()",
  "Рекурсивно: next(vals) = current node"],
-"def serialize(root):\n    res=[]\n    def dfs(n):\n        if not n: res.append('N'); return\n        res.append(str(n.val))\n        dfs(n.left); dfs(n.right)\n    dfs(root); return ','.join(res)\n\ndef deserialize(data):\n    vals=iter(data.split(','))\n    def dfs():\n        v=next(vals)\n        if v=='N': return None\n        node=TreeNode(int(v))\n        node.left,node.right=dfs(),dfs()\n        return node\n    return dfs()",
+"serialize: preorder DFS, null -> 'N', join через ','\n// deserialize: split, iter()\n// Рекурсивно: next(vals) = current node",
+"function serialize(root) {\n  const res = [];\n  function dfs(n) {\n    if (!n) { res.push('N'); return; }\n    res.push(String(n.val));\n    dfs(n.left); dfs(n.right);\n  }\n  dfs(root);\n  return res.join(',');\n}\nfunction deserialize(data) {\n  const vals = data.split(',');\n  let i = 0;\n  function dfs() {\n    const v = vals[i++];\n    if (v === 'N') return null;\n    const node = new TreeNode(parseInt(v, 10));\n    node.left = dfs(); node.right = dfs();\n    return node;\n  }\n  return dfs();\n}",
 "iter() + next() — элегантный consume без передачи индекса в рекурсии.",
-["dfs","serialization","hard"]);
+[
+ "dfs",
+ "serialization",
+ "hard"]);
 
 add("Tree","Subtree of Another Tree","E",
+"Проверить, является ли subRoot поддеревом root.",
 "isSameTree как subroutine. Для каждого узла s: isSameTree(s, t). Рекурси дальше если нет.",
 "DFS + isSameTree","O(mxn)","O(h)",
-["isSubtree(s,t): если not s → False",
+[
+ "isSubtree(s,t): если not s → False",
  "Если isSameTree(s,t) → True",
  "Return isSubtree(s.left,t) or isSubtree(s.right,t)"],
-"def isSubtree(root,subRoot):\n    if not root: return False\n    if isSameTree(root,subRoot): return True\n    return isSubtree(root.left,subRoot) or isSubtree(root.right,subRoot)",
+"isSubtree(s,t): если not s -> false\n// Если isSameTree(s,t) -> true\n// Return isSubtree(s.left,t) or isSubtree(s.right,t)",
+"function isSubtree(root, subRoot) {\n  if (!root) return false;\n  if (isSameTree(root, subRoot)) return true;\n  return isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);\n}\nfunction isSameTree(p, q) {\n  if (!p && !q) return true;\n  if (!p || !q || p.val !== q.val) return false;\n  return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);\n}",
 "O(mxn) — для каждого из m узлов потенциально O(n) сравнений.",
-["dfs","recursion"]);
+[
+ "dfs",
+ "recursion"]);
 
 add("Tree","Construct Binary Tree from Preorder and Inorder","M",
+"Построить бинарное дерево по обходам preorder и inorder.",
 "preorder[0]=root. Найди root в inorder → делит на left/right. Рекурси.",
 "Divide by inorder root position","O(n) с HashMap","O(n)",
-["HashMap: val → index в inorder",
+[
+ "HashMap: val → index в inorder",
  "root = preorder[pre_l]",
  "mid = map[root.val], left_size = mid - in_l",
  "Рекурси для left и right с правильными диапазонами"],
-"idx_map={v:i for i,v in enumerate(inorder)}\ndef build(pre_l,in_l,in_r):\n    if pre_l>len(preorder)-1 or in_l>in_r: return None\n    root=TreeNode(preorder[pre_l])\n    mid=idx_map[root.val]\n    ls=mid-in_l\n    root.left=build(pre_l+1,in_l,mid-1)\n    root.right=build(pre_l+ls+1,mid+1,in_r)\n    return root\nreturn build(0,0,len(inorder)-1)",
+"HashMap: val -> index в inorder\nroot = preorder[pre_l]\nmid = map[root.val], left_size = mid - in_l\n// Рекурси для left и right с правильными диапазонами",
+"function buildTree(preorder, inorder) {\n  const idxMap = new Map(inorder.map((v, i) => [v, i]));\n  function build(preL, inL, inR) {\n    if (preL > preorder.length - 1 || inL > inR) return null;\n    const root = new TreeNode(preorder[preL]);\n    const mid = idxMap.get(root.val);\n    const ls = mid - inL;\n    root.left = build(preL + 1, inL, mid - 1);\n    root.right = build(preL + ls + 1, mid + 1, inR);\n    return root;\n  }\n  return build(0, 0, inorder.length - 1);\n}",
 "pre_l для правого = pre_l + left_size + 1. Не забудь +1.",
-["dfs","divide"]);
+[
+ "dfs",
+ "divide"]);
 
 add("Tree","Validate Binary Search Tree","M",
+"Проверить, является ли бинарное дерево валидным BST.",
 "DFS с границами: каждый узел в (lo, hi). Обновляй при спуске.",
 "DFS with bounds propagation","O(n)","O(h)",
-["validate(node, lo=-inf, hi=inf)",
+[
+ "validate(node, lo=-inf, hi=inf)",
  "node.val <= lo или >= hi → False",
  "validate(left, lo, node.val)",
  "validate(right, node.val, hi)"],
-"def isValidBST(root,lo=float('-inf'),hi=float('inf')):\n    if not root: return True\n    if not (lo<root.val<hi): return False\n    return isValidBST(root.left,lo,root.val) and isValidBST(root.right,root.val,hi)",
+"validate(node, lo=-Infinity, hi=Infinity)\nnode.val <= lo или >= hi -> false\n// validate(left, lo, node.val)\n// validate(right, node.val, hi)",
+"function isValidBST(root, lo = -Infinity, hi = Infinity) {\n  if (!root) return true;\n  if (root.val <= lo || root.val >= hi) return false;\n  return isValidBST(root.left, lo, root.val) && isValidBST(root.right, root.val, hi);\n}",
 "Нельзя сравнивать только с parent — нарушение может быть от предка выше.",
-["dfs","BST"]);
+[
+ "dfs",
+ "BST"]);
 
 add("Tree","Kth Smallest Element in a BST","M",
+"Найти k-й по величине элемент в BST.",
 "Inorder BST = отсортировано. Итеративный inorder позволяет остановиться на k-м.",
 "Iterative Inorder DFS","O(H+k)","O(H)",
-["stack=[], curr=root",
+[
+ "stack=[], curr=root",
  "Пока curr или stack:",
  "  Push all left: while curr: push, curr=curr.left",
  "  Pop: k--, если k==0 → return curr.val",
  "  curr=curr.right"],
-"stack=[]\ncurr=root\nwhile curr or stack:\n    while curr:\n        stack.append(curr); curr=curr.left\n    curr=stack.pop()\n    k-=1\n    if k==0: return curr.val\n    curr=curr.right",
+"stack=[], curr=root\n// Пока curr или stack:\nPush all left: while curr: push, curr=curr.left\nPop: k--, если k==0 -> return curr.val\ncurr=curr.right",
+"function kthSmallest(root, k) {\n  const stack = [];\n  let curr = root;\n  while (curr || stack.length) {\n    while (curr) { stack.push(curr); curr = curr.left; }\n    curr = stack.pop();\n    if (--k === 0) return curr.val;\n    curr = curr.right;\n  }\n}",
 "Итеративная версия останавливается на k-м без обхода всего дерева.",
-["BST","inorder"]);
+[
+ "BST",
+ "inorder"]);
 
 add("Tree","Lowest Common Ancestor of BST","M",
+"Найти наименьшего общего предка двух узлов в BST.",
 "BST свойство: оба < root → влево. Оба > root → вправо. Иначе root = LCA.",
 "BST property traversal","O(H)","O(1)",
-["Пока root:",
+[
+ "Пока root:",
  "  p.val < root.val и q.val < root.val → root=root.left",
  "  p.val > root.val и q.val > root.val → root=root.right",
  "  Иначе return root"],
-"while root:\n    if p.val<root.val and q.val<root.val:\n        root=root.left\n    elif p.val>root.val and q.val>root.val:\n        root=root.right\n    else:\n        return root",
+"// Пока root:\np.val < root.val и q.val < root.val -> root=root.left\np.val > root.val и q.val > root.val -> root=root.right\nИначе return root",
+"function lowestCommonAncestor(root, p, q) {\n  while (root) {\n    if (p.val < root.val && q.val < root.val) root = root.left;\n    else if (p.val > root.val && q.val > root.val) root = root.right;\n    else return root;\n  }\n}",
 "Только для BST! Для обычного дерева нужен DFS с backtracking.",
-["BST"]);
+[
+ "BST"]);
 
 add("Tree","Implement Trie (Prefix Tree)","M",
+"Реализовать префиксное дерево с insert, search и startsWith.",
 "TrieNode: dict children + is_end флаг. Insert/Search/StartsWith — O(L).",
 "Trie data structure","O(L) per op","O(NxL) total",
-["TrieNode: children={}, end=False",
+[
+ "TrieNode: children={}, end=False",
  "insert: setdefault на каждый символ, end=True",
  "search: traverse + check end",
  "startsWith: traverse only → return True"],
-"class TrieNode:\n    def __init__(self): self.children={}; self.end=False\nclass Trie:\n    def __init__(self): self.root=TrieNode()\n    def insert(self,w):\n        cur=self.root\n        for c in w: cur=cur.children.setdefault(c,TrieNode())\n        cur.end=True\n    def search(self,w):\n        cur=self.root\n        for c in w:\n            if c not in cur.children: return False\n            cur=cur.children[c]\n        return cur.end\n    def startsWith(self,p):\n        cur=self.root\n        for c in p:\n            if c not in cur.children: return False\n            cur=cur.children[c]\n        return True",
+"TrieNode: children={}, end=false\ninsert: setdefault на каждый символ, end=true\nsearch: traverse + check end\nstartsWith: traverse only -> return true",
+"class TrieNode {\n  constructor() { this.children = {}; this.end = false; }\n}\nclass Trie {\n  constructor() { this.root = new TrieNode(); }\n  insert(word) {\n    let cur = this.root;\n    for (const c of word) {\n      if (!cur.children[c]) cur.children[c] = new TrieNode();\n      cur = cur.children[c];\n    }\n    cur.end = true;\n  }\n  search(word) {\n    let cur = this.root;\n    for (const c of word) {\n      if (!cur.children[c]) return false;\n      cur = cur.children[c];\n    }\n    return cur.end;\n  }\n  startsWith(prefix) {\n    let cur = this.root;\n    for (const c of prefix) {\n      if (!cur.children[c]) return false;\n      cur = cur.children[c];\n    }\n    return true;\n  }\n}",
 "search vs startsWith: идентичный traverse, только search проверяет end.",
-["trie","design"]);
+[
+ "trie",
+ "design"]);
 
 add("Tree","Add and Search Word","M",
+"Реализовать словарь с поиском слов, где . — любой символ.",
 "Trie + DFS для '.': при точке рекурсивно пробуй все children.",
 "Trie + DFS wildcard","O(L) обычный","O(26^L) worst case",
-["Trie как обычно",
+[
+ "Trie как обычно",
  "search: DFS через ноды",
  "При '.': попробуй все children рекурсивно",
  "При обычном символе: обычный traverse"],
-"def search(self,word):\n    def dfs(j,node):\n        for i in range(j,len(word)):\n            c=word[i]\n            if c=='.':\n                return any(dfs(i+1,child) for child in node.children.values())\n            if c not in node.children: return False\n            node=node.children[c]\n        return node.end\n    return dfs(0,self.root)",
+"// Trie как обычно\n// search: DFS через ноды\n// При '.': попробуй все children рекурсивно\n// При обычном символе: обычный traverse",
+"class WordDictionary {\n  constructor() { this.root = { children: {}, end: false }; }\n  addWord(word) {\n    let node = this.root;\n    for (const c of word) {\n      if (!node.children[c]) node.children[c] = { children: {}, end: false };\n      node = node.children[c];\n    }\n    node.end = true;\n  }\n  search(word) {\n    const dfs = (j, node) => {\n      for (let i = j; i < word.length; i++) {\n        const c = word[i];\n        if (c === '.') return Object.values(node.children).some(child => dfs(i + 1, child));\n        if (!node.children[c]) return false;\n        node = node.children[c];\n      }\n      return node.end;\n    };\n    return dfs(0, this.root);\n  }\n}",
 "'.' даёт экспоненциальный search в worst case — важно знать это ограничение.",
-["trie","dfs","wildcard"]);
+[
+ "trie",
+ "dfs",
+ "wildcard"]);
 
 add("Tree","Word Search II","H",
+"Найти все слова из списка, которые можно собрать в сетке букв.",
 "Trie из words + DFS по матрице. Trie: pruning если нет prefix. Удаляй найденные слова.",
 "Trie + Backtracking DFS","O(mxn x 4x3^(L-1))","O(WxL)",
-["Построй Trie из words",
+[
+ "Построй Trie из words",
  "DFS из каждой ячейки: трекай current trie node",
  "is_end → добавь слово, сбрось флаг",
  "Char не в children → prune",
  "Помечай '#', восстанавливай"],
-"# Insert all words into Trie\ndef dfs(r,c,node,path):\n    if node.word:\n        res.append(node.word); node.word=None\n    if r<0 or r>=R or c<0 or c>=C or board[r][c] not in node.children: return\n    tmp,board[r][c]=board[r][c],'#'\n    for dr,dc in [(0,1),(0,-1),(1,0),(-1,0)]:\n        dfs(r+dr,c+dc,node.children[tmp],path+tmp)\n    board[r][c]=tmp",
+"// Построй Trie из words\n// DFS из каждой ячейки: трекай current trie node\nis_end -> добавь слово, сбрось флаг\nChar не в children -> prune\n// Помечай '#', восстанавливай",
+"function findWords(board, words) {\n  const trie = { children: {}, word: null };\n  for (const w of words) {\n    let node = trie;\n    for (const c of w) {\n      if (!node.children[c]) node.children[c] = { children: {}, word: null };\n      node = node.children[c];\n    }\n    node.word = w;\n  }\n  const res = [], R = board.length, C = board[0].length;\n  const dirs = [[0,1],[0,-1],[1,0],[-1,0]];\n  function dfs(r, c, node) {\n    if (node.word) { res.push(node.word); node.word = null; }\n    const ch = board[r][c];\n    if (!node.children[ch]) return;\n    board[r][c] = '#';\n    const next = node.children[ch];\n    for (const [dr, dc] of dirs) {\n      const nr = r + dr, nc = c + dc;\n      if (nr >= 0 && nr < R && nc >= 0 && nc < C && board[nr][nc] !== '#')\n        dfs(nr, nc, next);\n    }\n    board[r][c] = ch;\n  }\n  for (let r = 0; r < R; r++)\n    for (let c = 0; c < C; c++)\n      dfs(r, c, trie);\n  return res;\n}",
 "Сбрасывай node.word после добавления — иначе дублируешь одно слово.",
-["trie","dfs","hard"]);
+[
+ "trie",
+ "dfs",
+ "hard"]);
 
-// HEAP
 add("Heap","Top K Frequent Elements","M",
+"Вернуть k самых частых элементов массива.",
 "Counter + nlargest(k). Или bucket sort O(n): freq → список. Собери с конца.",
 "Min-Heap или Bucket Sort","O(n log k) heap","O(n) bucket",
-["Bucket sort:",
+[
+ "Bucket sort:",
  "count=Counter(nums)",
  "buckets=[[] for _ in range(n+1)]",
  "Для num,freq: buckets[freq].append(num)",
  "Собирай с конца пока не накопишь k"],
-"count=Counter(nums)\nbuckets=[[] for _ in range(len(nums)+1)]\nfor num,freq in count.items():\n    buckets[freq].append(num)\nres=[]\nfor i in range(len(buckets)-1,0,-1):\n    res.extend(buckets[i])\n    if len(res)>=k: return res[:k]\n\n# Heap O(n log k)\nreturn [x for x,_ in Counter(nums).most_common(k)]",
+"// Bucket sort:\ncount=Counter(nums)\nbuckets=[[] for _ in range(n+1)]\n// Для num,freq: buckets[freq].append(num)\n// Собирай с конца пока не накопишь k",
+"function topKFrequent(nums, k) {\n  const count = new Map();\n  for (const n of nums) count.set(n, (count.get(n) || 0) + 1);\n  const buckets = Array.from({ length: nums.length + 1 }, () => []);\n  for (const [num, freq] of count) buckets[freq].push(num);\n  const res = [];\n  for (let i = buckets.length - 1; i > 0; i--) {\n    res.push(...buckets[i]);\n    if (res.length >= k) return res.slice(0, k);\n  }\n  return res;\n}",
 "Bucket sort гениально, но работает только если freq <= n (всегда верно).",
-["heap","counter","bucket sort"]);
+[
+ "heap",
+ "counter",
+ "bucket sort"]);
 
 add("Heap","Find Median from Data Stream","H",
+"Реализовать структуру данных для поиска медианы потока чисел.",
 "Two heaps: max-heap (нижняя) + min-heap (верхняя). Балансируй после каждого insert.",
 "Two Heaps","O(log n) addNum","O(1) findMedian",
-["small=max-heap (негейти), large=min-heap",
+[
+ "small=max-heap (негейти), large=min-heap",
  "addNum: push в small",
  "Если small.top > large.top → перенеси",
  "Балансируй размеры (разница <= 1)",
  "findMedian: равные → avg, иначе top большего"],
-"import heapq\nclass MedianFinder:\n    def __init__(self): self.small,self.large=[],[]\n    def addNum(self,n):\n        heapq.heappush(self.small,-n)\n        if self.small and self.large and (-self.small[0])>self.large[0]:\n            heapq.heappush(self.large,-heapq.heappop(self.small))\n        if len(self.small)>len(self.large)+1:\n            heapq.heappush(self.large,-heapq.heappop(self.small))\n        elif len(self.large)>len(self.small):\n            heapq.heappush(self.small,-heapq.heappop(self.large))\n    def findMedian(self):\n        if len(self.small)==len(self.large): return(-self.small[0]+self.large[0])/2\n        return -self.small[0]",
+"small=max-heap (негейти), large=min-heap\n// addNum: push в small\n// Если small.top > large.top -> перенеси\n// Балансируй размеры (разница <= 1)\nfindMedian: равные -> avg, иначе top большего",
+"class MedianFinder {\n  constructor() { this.small = []; this.large = []; }\n  addNum(num) {\n    this._pushSmall(num);\n    if (this.small[0] !== undefined && this.large[0] !== undefined && -this.small[0] > this.large[0])\n      this._pushLarge(-this._popSmall());\n    if (this.small.length > this.large.length + 1)\n      this._pushLarge(-this._popSmall());\n    else if (this.large.length > this.small.length)\n      this._pushSmall(-this._popLarge());\n  }\n  findMedian() {\n    if (this.small.length === this.large.length)\n      return (-this.small[0] + this.large[0]) / 2;\n    return -this.small[0];\n  }\n  _pushSmall(v) { this.small.push(-v); this._siftUp(this.small); }\n  _pushLarge(v) { this.large.push(v); this._siftUp(this.large); }\n  _popSmall() { const v = -this.small[0]; this._pop(this.small); return v; }\n  _popLarge() { const v = this.large[0]; this._pop(this.large); return v; }\n  _siftUp(h) { let i = h.length - 1; while (i > 0) { const p = (i-1)>>1; if (h[p] <= h[i]) break; [h[p], h[i]] = [h[i], h[p]]; i = p; } }\n  _pop(h) { const top = h[0]; const last = h.pop(); if (h.length) { h[0] = last; let i = 0; for (;;) { let s = i, l = 2*i+1, r = 2*i+2; if (l < h.length && h[l] < h[s]) s = l; if (r < h.length && h[r] < h[s]) s = r; if (s === i) break; [h[i], h[s]] = [h[s], h[i]]; i = s; } } return top; }\n}",
 "Python: max-heap = нагейти числа. small всегда size >= large.",
-["heap","design","hard"]);
+[
+ "heap",
+ "design",
+ "hard"]);
 
 // ===== APP =====
 var COLORS = {
@@ -969,23 +1343,34 @@ function openModal(p) {
   var color = COLORS[p.cat] || "#00e5ff";
   var diffLabel = {E:"Easy",M:"Medium",H:"Hard",P:"Premium"}[p.diff];
   var stepsHTML = p.steps.map(function(s){return "<li>"+s+"</li>"}).join("");
-  var safeCode = p.code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  var safeSketch = escCode(p.sketch);
+  var safeFull = escCode(p.full);
   mcontent.innerHTML =
     "<div class='m-title'>"+p.title+"</div>"+
     "<div style='display:flex;align-items:center;gap:8px;margin-bottom:16px'>"+
       "<span class='diff "+p.diff+"'>"+diffLabel+"</span>"+
       "<span class='m-cat' style='color:"+color+";border:0;padding:0;margin:0'>▸ "+p.cat+"</span>"+
     "</div>"+
-    "<div class='m-idea'>"+p.idea+"</div>"+
+    "<div class='m-sec'><div class='m-lbl'>Задача</div><div class='m-desc'>"+p.desc+"</div></div>"+
+    "<div class='m-sec'><div class='m-lbl'>Идея</div><div class='m-idea'>"+p.idea+"</div></div>"+
     "<div class='m-sec'><div class='m-lbl'>Pattern</div><div class='m-txt'>"+p.pattern+"</div></div>"+
     "<div class='m-sec'><div class='m-lbl'>Complexity</div><div class='cplx'>"+
       "<div class='citem'><div class='cl'>Time</div><div class='cv'>"+p.tc+"</div></div>"+
       "<div class='citem'><div class='cl'>Space</div><div class='cv'>"+p.sc+"</div></div>"+
     "</div></div>"+
     "<div class='m-sec'><div class='m-lbl'>Steps</div><ol class='steps'>"+stepsHTML+"</ol></div>"+
-    "<div class='m-sec'><div class='m-lbl'>Pseudocode</div><div class='code'>"+safeCode+"</div></div>"+
+    "<div class='m-sec'><div class='m-lbl'>Напоминание</div><div class='code code-sketch'>"+safeSketch+"</div>"+
+      "<button type='button' class='code-toggle' id='codeToggle'>▸ полный код (JS)</button>"+
+      "<div class='code code-full' id='codeFull'>"+safeFull+"</div>"+
+    "</div>"+
     "<div class='m-sec'><div class='m-lbl'>⚠ Gotcha</div><div class='gotcha'>"+p.gotcha+"</div></div>"+
     "<div class='m-tags'>"+p.tags.map(function(t){return "<span class='tag'>"+t+"</span>"}).join("")+"</div>";
+  var toggle = document.getElementById("codeToggle");
+  var fullEl = document.getElementById("codeFull");
+  toggle.addEventListener("click", function(){
+    var open = fullEl.classList.toggle("open");
+    toggle.textContent = open ? "▾ скрыть полный код" : "▸ полный код (JS)";
+  });
   overlay.classList.add("open");
   document.getElementById("modal").scrollTop = 0;
 }
@@ -1009,8 +1394,9 @@ function render() {
   var q = searchQuery.toLowerCase();
   var filtered = P.filter(function(p){
     var mc = activeFilter==="All" || p.cat===activeFilter;
-    var ms = !q || p.title.toLowerCase().includes(q) || p.idea.toLowerCase().includes(q) ||
-             p.cat.toLowerCase().includes(q) || p.tags.some(function(t){return t.includes(q)});
+    var ms = !q || p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) ||
+             p.idea.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q) ||
+             p.tags.some(function(t){return t.includes(q)});
     return mc && ms;
   });
 
@@ -1041,6 +1427,7 @@ function render() {
           "<div class='card-title'>"+p.title+"</div>"+
           "<span class='diff "+p.diff+"'>"+diffLabel+"</span>"+
         "</div>"+
+        "<div class='card-desc'>"+p.desc+"</div>"+
         "<div class='card-idea'>"+p.idea+"</div>"+
         "<div class='card-meta'>"+
           "<span class='card-pattern' style='color:"+color+"'>"+p.pattern+"</span>"+
